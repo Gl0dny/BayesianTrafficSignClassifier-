@@ -3,12 +3,30 @@ from sklearn.metrics import classification_report
 import os
 
 class HistogramBayesClassifier:
+    """
+    Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
+    """
+    
     def __init__(self, bins=10):
+        """
+        Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
+
+        Parameters:
+        - bins (int): Liczba przedziałów dla histogramów.
+        """
         self.bins = bins
         self.histograms = {}
         self.classes = None
 
     def fit(self, X, y, train_log_file):
+        """
+        Trenuje klasyfikator na podstawie danych treningowych, obliczając histogramy dla każdej klasy i cechy.
+        
+        Parameters:
+        - X (numpy.ndarray): Tablica z cechami treningowymi.
+        - y (numpy.ndarray): Tablica z etykietami klas treningowych.
+        - train_log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
+        """
         self.classes = np.unique(y)
         for cls in self.classes:
             self.histograms[cls] = []
@@ -18,6 +36,12 @@ class HistogramBayesClassifier:
         self.log_histograms(train_log_file)
 
     def log_histograms(self, log_file):
+        """
+        Zapisuje histogramy do pliku tekstowego.
+
+        Parameters:
+        - log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
+        """
         with open(log_file, 'w') as f:
             for cls, hists in self.histograms.items():
                 f.write(f'Class {cls} histograms:\n')
@@ -26,6 +50,16 @@ class HistogramBayesClassifier:
                 f.write('\n')
 
     def predict(self, X, predict_log_file):
+        """
+        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+
+        Parameters:
+        - X (numpy.ndarray): Tablica z cechami testowymi.
+        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+
+        Returns:
+        - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+        """
         y_pred = []
         with open(predict_log_file, 'w') as f:
             for x in X:
@@ -36,6 +70,15 @@ class HistogramBayesClassifier:
         return np.array(y_pred)
 
     def calculate_class_probabilities(self, x):
+        """
+        Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+
+        Parameters:
+        - x (numpy.ndarray): Pojedynczy przykład.
+
+        Returns:
+        - dict: Słownik z klasami i ich odpowiadającymi prawdopodobieństwami.
+        """
         class_probs = {}
         for cls in self.classes:
             class_prob = 1.0
@@ -65,3 +108,23 @@ if __name__ == '__main__':
     y_pred = h_classifier.predict(hu_test, predict_log_file='logs/predict_probs.txt')
     print("Histogram Bayes Classification Report:")
     print(classification_report(y_test, y_pred))
+
+# Opis implementacji:
+
+#     HistogramBayesClassifier: Klasa klasyfikatora Bayesa z wykorzystaniem histogramów.
+#         __init__: Inicjalizuje klasę z określoną liczbą przedziałów dla histogramów.
+#         fit: Trenuje klasyfikator, obliczając histogramy dla każdej klasy i cechy.
+#         log_histograms: Zapisuje histogramy do pliku tekstowego.
+#         predict: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+#         calculate_class_probabilities: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+
+#     Główna część skryptu:
+#         load_data: Funkcja ładuje dane Hu oraz etykiety klas z plików .npy.
+#         Trenowanie klasyfikatora Histogram Bayes: Tworzy instancję klasyfikatora, trenuje go na danych treningowych i zapisuje histogramy do pliku.
+#         Predykcja i ocena modelu: Przewiduje klasy dla danych testowych, zapisuje szczegółowe informacje o predykcji do pliku i drukuje raport klasyfikacji.
+
+# Zawartość plików logów:
+
+#     train_histograms.txt: Plik zawiera histogramy dla każdej klasy i cechy, obliczone na danych treningowych.
+#     predict_probs.txt: Plik zawiera szczegółowe informacje o predykcji dla każdej próbki testowej, w tym przewidywaną klasę oraz prawdopodobieństwa klas.
+

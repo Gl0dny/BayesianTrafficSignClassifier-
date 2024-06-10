@@ -34,7 +34,7 @@ def load_preprocess_gtsrb_data(data_dir):
     images = []
     hu_moments = []
     labels = []
-    classes = 8 
+    classes = 8  # Liczba klas w zbiorze danych
 
     for class_id in range(classes):  # Iteracja przez każdą klasę
         class_dir = os.path.join(data_dir, 'train', str(class_id))
@@ -114,7 +114,6 @@ def split_train_test_data(data, test_size=0.2, random_state=42):
 
     return X_train, X_test, hu_train, hu_test, y_train, y_test
 
-
 def log_hu_moments(hu_moments, labels, output_file):
     """
     Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
@@ -156,3 +155,49 @@ if __name__ == '__main__':
     print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
     print("Data preprocessing complete. Hu moments logged to", log_file)
     print("Data preprocessing complete.")
+
+# Opis funkcji:
+# normalize_hu_moments(hu_moments)
+
+# Normalizuje momenty Hu, stosując skalę logarytmiczną, aby uczynić je bardziej porównywalnymi i skalowalnymi.
+
+#     Parameters:
+#         hu_moments (ndarray): Tablica momentów Hu.
+#     Returns:
+#         ndarray: Znormalizowane momenty Hu.
+
+# load_preprocess_gtsrb_data(data_dir)
+
+# Funkcja ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
+
+#     Parameters:
+#         data_dir (str): Ścieżka do katalogu z danymi GTSRB.
+#     Returns:
+#         ndarray: Tablica z obrazami.
+#         ndarray: Tablica z momentami Hu.
+#         ndarray: Tablica z etykietami klas.
+
+# split_train_test_data(data, test_size=0.2, random_state=42)
+
+# Funkcja dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
+
+#     Parameters:
+#         data (str): Ścieżka do katalogu z danymi.
+#         test_size (float): Ułamek danych do zestawu testowego.
+#         random_state (int): Losowy seed dla podziału danych.
+#     Returns:
+#         ndarray: Obrazy treningowe.
+#         ndarray: Obrazy testowe.
+#         ndarray: Momenty Hu dla zestawu treningowego.
+#         ndarray: Momenty Hu dla zestawu testowego.
+#         ndarray: Etykiety dla zestawu treningowego.
+#         ndarray: Etykiety dla zestawu testowego.
+
+# log_hu_moments(hu_moments, labels, output_file)
+
+# Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
+
+#     Parameters:
+#         hu_moments (ndarray): Tablica z momentami Hu.
+#         labels (ndarray): Etykiety klas.
+#         output_file (str): Ścieżka do pliku wyjściowego.
