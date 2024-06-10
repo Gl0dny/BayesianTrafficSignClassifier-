@@ -6,7 +6,7 @@ project_root/
 │   ├── GTSRB/  # katalog z danymi GTSRB
 │   │   └── Final_Training/
 │   │       └── Images/  # tutaj będą przechowywane obrazy po rozpakowaniu
-│   └── download_and_extract_gtsrb.py  # skrypt do pobierania i rozpakowywania danych
+│   └── extract_gtsrb.py  # skrypt do rozpakowywania danych
 │
 ├── scripts/
 │   ├── preprocess_data.py  # skrypt do wczytywania, przetwarzania i podziału danych
