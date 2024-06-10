@@ -10,19 +10,19 @@ class HistogramBayesClassifier:
         self.histograms = {}
         self.classes = None
 
-    def fit(self, X, y):
+    def fit(self, X, y, train_log_file):
         self.classes = np.unique(y)
         for cls in self.classes:
             self.histograms[cls] = []
             for feature in range(X.shape[1]):
                 hist, bin_edges = np.histogram(X[y == cls, feature], bins=self.bins)
                 self.histograms[cls].append((hist, bin_edges))
-        self.log_histograms()
+        self.log_histograms(train_log_file)
 
-    def log_histograms(self):
+    def log_histograms(self, log_file):
         log_dir = 'logs'
         os.makedirs(log_dir, exist_ok=True)
-        log_file = os.path.join(log_dir, 'histograms.txt')
+        log_file = os.path.join(log_dir, log_file)
 
         with open(log_file, 'w') as f:
             for cls in self.classes:
@@ -33,7 +33,20 @@ class HistogramBayesClassifier:
                     f.write(f'    Bin edges: {bin_edges}\n')
                 f.write('\n')
 
-    def predict(self, X):
+    def log_probs(self, probs, log_file):
+        log_dir = 'logs'
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, log_file)
+
+        with open(log_file, 'w') as f:
+            for idx, prob_list in enumerate(probs):
+                f.write(f'Sample {idx + 1} Probabilities:\n')
+                for cls, prob in zip(self.classes, prob_list):
+                    f.write(f'  Class {cls}: {prob}\n')
+                f.write('\n')
+
+    def predict(self, X, predict_log_file):
+        log_probs = []  # Lista do przechowywania prawdopodobieństw dla każdej próbki
         predictions = []
         for x in X:
             class_probs = []
@@ -45,31 +58,20 @@ class HistogramBayesClassifier:
                     bin_index = min(max(bin_index, 0), len(hist) - 1)
                     prob *= hist[bin_index]
                 class_probs.append(prob)
+            log_probs.append(class_probs)  # Dodajemy prawdopodobieństwa dla danej próbki do listy log_probs
             predictions.append(self.classes[np.argmax(class_probs)])
+        
+        # Zapisujemy log do pliku
+        self.log_probs(log_probs, predict_log_file)
+        
         return np.array(predictions)
 
 def train_and_evaluate_histogram_nb(hu_train, y_train, hu_test, y_test, bins=5):
     h_classifier = HistogramBayesClassifier(bins=bins)
-    h_classifier.fit(hu_train, y_train)
-    y_pred = h_classifier.predict(hu_test)
+    h_classifier.fit(hu_train, y_train, train_log_file='train_histograms.txt')
+    y_pred = h_classifier.predict(hu_test, predict_log_file='predict_probs.txt')
     print("Histogram Bayes Classification Report:")
     print(classification_report(y_test, y_pred))
-    visualize_histograms(h_classifier, hu_train, y_train, class_idx=0)
-
-def visualize_histograms(classifier, X, y, class_idx, num_features=7):
-    fig, axes = plt.subplots(nrows=1, ncols=num_features, figsize=(18, 4))
-
-    for feature_idx in range(1, num_features + 1):
-        hist, bin_edges = classifier.histograms[class_idx][feature_idx - 1]
-        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
-        axes[feature_idx - 1].bar(bin_centers, hist, width=0.7*(bin_centers[1] - bin_centers[0]))
-        axes[feature_idx - 1].set_title(f'Moment Hu {feature_idx}')
-        axes[feature_idx - 1].set_xlabel('Value')
-        axes[feature_idx - 1].set_ylabel('Density')
-
-    plt.tight_layout()
-    plt.show()
-
 
 if __name__ == '__main__':
     data_dir = 'data/GTSRB/Traffic_Signs/'
