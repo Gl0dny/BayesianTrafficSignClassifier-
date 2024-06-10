@@ -34,7 +34,7 @@ def load_preprocess_gtsrb_data(data_dir):
     images = []
     hu_moments = []
     labels = []
-    classes = 43  # GTSRB ma 43 klasy znaków drogowych
+    classes = 8 
 
     for class_id in range(classes):  # Iteracja przez każdą klasę
         class_dir = os.path.join(data_dir, 'train', str(class_id))
@@ -46,7 +46,7 @@ def load_preprocess_gtsrb_data(data_dir):
                 image = Image.open(os.path.join(class_dir, img_name))
                 # Konwersja obrazu do skali szarości
                 image = image.convert('L')
-                image = image.resize((32, 32))
+                image = image.resize((64, 64))
                 image_array = np.array(image)
 
                 # Obliczanie momentów Hu
