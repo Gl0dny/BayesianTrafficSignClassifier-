@@ -96,6 +96,7 @@ def split_train_test_data(data, test_size=0.2, random_state=42):
 
     return X_train, X_test, hu_train, hu_test, y_train, y_test
 
+
 def log_hu_moments(hu_moments, labels, output_file):
     """
     Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
@@ -106,12 +107,14 @@ def log_hu_moments(hu_moments, labels, output_file):
     - output_file: ścieżka do pliku wyjściowego.
     """
     with open(output_file, 'w') as f:
+        last_sample_number = 0
         classes = np.unique(labels)
         for class_id in classes:
-            f.write(f'Klasa {class_id}:\n')
-            moments_class = hu_moments[labels == class_id]
-            for moments in moments_class:
-                f.write(f'{moments}\n')
+            f.write(f'Class {class_id} Hu Moments:\n')
+            class_indices = np.where(labels == class_id)[0]
+            for idx, moment_idx in enumerate(class_indices, start=1):
+                f.write(f'Sample {last_sample_number + idx} Hu Moments: {hu_moments[moment_idx]}\n')
+            last_sample_number += len(class_indices)
             f.write('\n')
 
 if __name__ == '__main__':

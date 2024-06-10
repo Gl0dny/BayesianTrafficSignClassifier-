@@ -46,7 +46,7 @@ class HistogramBayesClassifier:
                 f.write('\n')
 
     def predict(self, X, predict_log_file):
-        log_probs = []  # Lista do przechowywania prawdopodobieństw dla każdej próbki
+        log_probs = []  # Lista do przechowywania logarytmów prawdopodobieństw dla każdej próbki
         predictions = []
         for x in X:
             class_probs = []
@@ -56,14 +56,14 @@ class HistogramBayesClassifier:
                     hist, bin_edges = self.histograms[cls][feature]
                     bin_index = np.digitize(x[feature], bin_edges) - 1
                     bin_index = min(max(bin_index, 0), len(hist) - 1)
-                    prob *= hist[bin_index]
+                    # Normalizacja histogramu
+                    normalized_hist = hist / np.sum(hist)
+                    prob *= normalized_hist[bin_index]
                 class_probs.append(prob)
-            log_probs.append(class_probs)  # Dodajemy prawdopodobieństwa dla danej próbki do listy log_probs
+            log_probs.append(np.log(class_probs))  # Dodajemy logarytmy prawdopodobieństw dla danej próbki do listy log_probs
             predictions.append(self.classes[np.argmax(class_probs)])
-        
         # Zapisujemy log do pliku
         self.log_probs(log_probs, predict_log_file)
-        
         return np.array(predictions)
 
 def train_and_evaluate_histogram_nb(hu_train, y_train, hu_test, y_test, bins=5):
