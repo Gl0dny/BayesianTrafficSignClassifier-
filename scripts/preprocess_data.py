@@ -80,3 +80,4 @@ if __name__ == '__main__':
 
     print(f'Train set size: {X_train.shape[0]}, Test set size: {X_test.shape[0]}')
     print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
+    print("Data preprocessing complete.")
