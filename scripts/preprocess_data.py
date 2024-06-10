@@ -4,6 +4,21 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 import cv2
 
+def normalize_hu_moments(hu_moments):
+    """
+    Normalizuje momenty Hu, stosując skalę logarytmiczną.
+    
+    Parameters:
+    - hu_moments: Tablica momentów Hu.
+    
+    Returns:
+    - znormalizowane momenty Hu.
+    """
+    for i in range(len(hu_moments)):
+        for j in range(len(hu_moments[i])):
+            hu_moments[i][j] = -np.sign(hu_moments[i][j]) * np.log10(np.abs(hu_moments[i][j]))
+    return hu_moments
+
 def load_preprocess_gtsrb_data(data_dir):
     """
     Funkcja ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
@@ -44,7 +59,10 @@ def load_preprocess_gtsrb_data(data_dir):
             except Exception as e:
                 print("Error processing image:", e)
 
-    return np.array(images), np.array(hu_moments), np.array(labels)
+    # Normalizacja momentów Hu
+    hu_moments = normalize_hu_moments(np.array(hu_moments))
+
+    return np.array(images), hu_moments, np.array(labels)
 
 def split_train_test_data(data, test_size=0.2, random_state=42):
     """
