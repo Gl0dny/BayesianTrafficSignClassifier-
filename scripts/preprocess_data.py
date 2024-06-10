@@ -5,25 +5,36 @@ from sklearn.model_selection import train_test_split
 import cv2
 
 def load_preprocess_gtsrb_data(data_dir):
+    """
+    Funkcja ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
+
+    Parameters:
+    - data_dir: ścieżka do katalogu z danymi GTSRB.
+
+    Returns:
+    - images: tablica z obrazami.
+    - hu_moments: tablica z momentami Hu.
+    - labels: tablica z etykietami klas.
+    """
     images = []
     hu_moments = []
     labels = []
-    classes = 43
+    classes = 43  # GTSRB ma 43 klasy znaków drogowych
 
-    for class_id in range(classes):  # GTSRB ma 43 klasy znaków drogowych
+    for class_id in range(classes):  # Iteracja przez każdą klasę
         class_dir = os.path.join(data_dir, 'train', str(class_id))
         if not os.path.exists(class_dir):
             continue
 
-        for img_name in os.listdir(class_dir):
+        for img_name in os.listdir(class_dir):  # Iteracja przez każdy obraz w klasie
             try:
                 image = Image.open(os.path.join(class_dir, img_name))
-                # Convert the image to grayscale
+                # Konwersja obrazu do skali szarości
                 image = image.convert('L')
                 image = image.resize((32, 32))
                 image_array = np.array(image)
 
-                # Compute Hu Moments
+                # Obliczanie momentów Hu
                 moments = cv2.moments(image_array)
                 hu_moments_image = cv2.HuMoments(moments).flatten()
 
@@ -36,6 +47,22 @@ def load_preprocess_gtsrb_data(data_dir):
     return np.array(images), np.array(hu_moments), np.array(labels)
 
 def split_train_test_data(data, test_size=0.2, random_state=42):
+    """
+    Funkcja dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
+
+    Parameters:
+    - data: ścieżka do katalogu z danymi.
+    - test_size: ułamek danych do zestawu testowego.
+    - random_state: losowy seed dla podziału danych.
+
+    Returns:
+    - X_train: obrazy treningowe.
+    - X_test: obrazy testowe.
+    - hu_train: momenty Hu dla zestawu treningowego.
+    - hu_test: momenty Hu dla zestawu testowego.
+    - y_train: etykiety dla zestawu treningowego.
+    - y_test: etykiety dla zestawu testowego.
+    """
     if os.path.exists(os.path.join(data, 'X_train.npy')):
         print("Dane zostały już przetworzone. Ładowanie z plików numpy...")
         X_train = np.load(os.path.join(data, 'X_train.npy'))
@@ -49,7 +76,7 @@ def split_train_test_data(data, test_size=0.2, random_state=42):
         images, hu_moments, labels = load_preprocess_gtsrb_data(data)
         print(f'Loaded {len(images)} images with {len(labels)} labels.')
 
-        # Checking data shape
+        # Sprawdzanie kształtu danych
         print(images.shape, labels.shape)
         print(hu_moments.shape)
 
@@ -69,6 +96,24 @@ def split_train_test_data(data, test_size=0.2, random_state=42):
 
     return X_train, X_test, hu_train, hu_test, y_train, y_test
 
+def log_hu_moments(hu_moments, labels, output_file):
+    """
+    Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
+    
+    Parameters:
+    - hu_moments: tablica z momentami Hu.
+    - labels: etykiety klas.
+    - output_file: ścieżka do pliku wyjściowego.
+    """
+    with open(output_file, 'w') as f:
+        classes = np.unique(labels)
+        for class_id in classes:
+            f.write(f'Klasa {class_id}:\n')
+            moments_class = hu_moments[labels == class_id]
+            for moments in moments_class:
+                f.write(f'{moments}\n')
+            f.write('\n')
+
 if __name__ == '__main__':
     # Ścieżka do katalogu z danymi
     data_dir = 'data/GTSRB/Traffic_Signs/'
@@ -78,6 +123,15 @@ if __name__ == '__main__':
         data=data_dir, test_size=0.2, random_state=42
     )
 
+    # Upewnij się, że folder logs istnieje
+    log_dir = 'logs'
+    os.makedirs(log_dir, exist_ok=True)
+
+    # Logowanie momentów Hu do pliku
+    log_file = os.path.join(log_dir, 'hu_moments_log.txt')
+    log_hu_moments(hu_train, y_train, log_file)
+
     print(f'Train set size: {X_train.shape[0]}, Test set size: {X_test.shape[0]}')
     print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
+    print("Data preprocessing complete. Hu moments logged to", log_file)
     print("Data preprocessing complete.")

@@ -37,7 +37,6 @@ Upewnij się, że masz zainstalowane wszystkie wymagane biblioteki:
 ```bash
 pip install numpy scikit-learn pillow opencv-python matplotlib
 ```
-
 Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
 Opis Projektu
 
@@ -106,3 +105,17 @@ Szczegółowy Opis Kroków
     Wizualizacja danych: Skrypt visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
 
     Trenowanie modeli: Skrypty train_gaussian_nb.py oraz train_histogram_nb.py trenują odpowiednio parametryczny (Gaussian Naive Bayes) oraz nieparametryczny (Histogram Bayes) klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
+
+
+
+    Do raportu:
+    Wsparcie (Support):
+
+    Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
+    Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
+    Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
+
+    Średnie wartości dla wszystkich klas:
+
+    Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
+    Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora
