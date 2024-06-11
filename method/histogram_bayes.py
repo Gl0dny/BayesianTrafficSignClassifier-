@@ -5,7 +5,7 @@ class HistogramBayesClassifier:
     Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
     """
     
-    def __init__(self, bins, X_train, y_train, X_test, y_test, no_classes):
+    def __init__(self, bins, X_train, y_train, X_test, y_test):
         """
         Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
 
@@ -16,7 +16,7 @@ class HistogramBayesClassifier:
         """
         self.bins = bins
         self.histograms = {}
-        self.classes = no_classes
+        self.classes = np.unique(y_train)
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -63,11 +63,11 @@ class HistogramBayesClassifier:
         """
         y_pred = []
         with open(predict_log_file, 'w') as f:
-            for x in self.X_test:
+            for i, x in enumerate(self.X_test):
                 class_probs = self.calculate_class_probabilities(x)
                 predicted_class = max(class_probs, key=class_probs.get)
                 y_pred.append(predicted_class)
-                f.write(f'Sample: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
+                f.write(f'Sample: {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
         return np.array(y_pred)
     
     def calculate_class_probabilities(self, x):

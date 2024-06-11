@@ -1,55 +1,44 @@
-import sys
 import numpy as np
 from sklearn.metrics import classification_report
 
-def load_data(data_dir):
+class GaussianBayesClassifier:
     """
-    Funkcja ładuje przetworzone dane Hu z plików .npy.
+    Klasyfikator Bayesa z wykorzystaniem rozkładów Gaussa do modelowania rozkładów cech.
+    """
     
-    Parameters:
-    - data_dir (str): Ścieżka do katalogu z danymi.
-
-    Returns:
-    - hu_train (numpy.ndarray): Moment Hu dla danych treningowych.
-    - hu_test (numpy.ndarray): Moment Hu dla danych testowych.
-    - y_train (numpy.ndarray): Etykiety klas dla danych treningowych.
-    - y_test (numpy.ndarray): Etykiety klas dla danych testowych.
-    """
-    hu_train = np.load(f'{data_dir}hu_train.npy')
-    hu_test = np.load(f'{data_dir}hu_test.npy')
-    y_train = np.load(f'{data_dir}y_train.npy')
-    y_test = np.load(f'{data_dir}y_test.npy')
-    return hu_train, hu_test, y_train, y_test
-
-class MaximumLikelihoodBayesClassifier:
-    def __init__(self):
+    def __init__(self, X_train, y_train, X_test, y_test):
         """
-        Konstruktor klasy MaximumLikelihoodBayesClassifier.
-        Inicjalizuje struktury do przechowywania priorytetów klas, średnich oraz wariancji.
+        Inicjalizuje klasyfikator na podstawie danych treningowych i testowych.
+
+        Parameters:
+        - X_train (numpy.ndarray): Tablica z cechami treningowymi.
+        - y_train (numpy.ndarray): Tablica z etykietami klas treningowych.
+        - X_test (numpy.ndarray): Tablica z cechami testowymi.
+        - y_test (numpy.ndarray): Tablica z etykietami klas testowych.
         """
-        self.class_prior = {}
+        self.classes = np.unique(y_train)
+        self.X_train = X_train
+        self.y_train = y_train
+        self.X_test = X_test
+        self.y_test = y_test
         self.mean = {}
         self.variance = {}
-    
-    def fit(self, X, y):
+        self.class_prior = {}
+
+    def fit(self):
         """
-        Trenuje klasyfikator parametryczny Bayesa przy użyciu metody maksymalnego prawdopodobieństwa.
-        
-        Parameters:
-        - X (numpy.ndarray): Tablica z cechami treningowymi.
-        - y (numpy.ndarray): Tablica z etykietami klas treningowych.
+        Trenuje klasyfikator na podstawie danych treningowych, obliczając średnie, wariancje i priorytety klas.
         """
-        self.classes = np.unique(y)
         for c in self.classes:
-            X_c = X[y == c]
-            self.class_prior[c] = len(X_c) / len(X)
+            X_c = self.X_train[self.y_train == c]
             self.mean[c] = np.mean(X_c, axis=0)
             self.variance[c] = np.var(X_c, axis=0)
-    
+            self.class_prior[c] = len(X_c) / len(self.X_train)
+
     def _calculate_likelihood(self, class_idx, x):
         """
         Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
-        
+
         Parameters:
         - class_idx (int): Indeks klasy.
         - x (numpy.ndarray): Pojedynczy przykład.
@@ -62,11 +51,11 @@ class MaximumLikelihoodBayesClassifier:
         numerator = np.exp(- ((x - mean) ** 2) / (2 * var))
         denominator = np.sqrt(2 * np.pi * var)
         return numerator / denominator
-    
+
     def _calculate_posterior(self, x):
         """
         Oblicza prawdopodobieństwo a posteriori dla każdej klasy i wybiera klasę z najwyższym prawdopodobieństwem.
-        
+
         Parameters:
         - x (numpy.ndarray): Pojedynczy przykład.
 
@@ -80,63 +69,34 @@ class MaximumLikelihoodBayesClassifier:
             posterior = prior + conditional
             posteriors.append(posterior)
         return self.classes[np.argmax(posteriors)]
-    
-    def predict(self, X):
+
+    def predict(self, predict_log_file):
         """
-        Przewiduje klasy dla zbioru danych.
-        
+        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+
         Parameters:
-        - X (numpy.ndarray): Tablica z cechami testowymi.
+        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
 
         Returns:
         - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
         """
-        y_pred = [self._calculate_posterior(x) for x in X]
+        y_pred = []
+        with open(predict_log_file, 'w') as f:
+            for i, x in enumerate(self.X_test):
+                predicted_class = self._calculate_posterior(x)
+                y_pred.append(predicted_class)
+                class_probs = {cls: self._calculate_posterior(x) for cls in self.classes}
+                f.write(f'Sample {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
         return np.array(y_pred)
-
-def train_and_evaluate_bayes(hu_train, y_train, hu_test, y_test):
-    """
-    Trenuje i ocenia klasyfikator parametryczny Bayesa.
     
-    Parameters:
-    - hu_train (numpy.ndarray): Moment Hu dla danych treningowych.
-    - y_train (numpy.ndarray): Etykiety klas dla danych treningowych.
-    - hu_test (numpy.ndarray): Moment Hu dla danych testowych.
-    - y_test (numpy.ndarray): Etykiety klas dla danych testowych.
-    """
-    classifier = MaximumLikelihoodBayesClassifier()
-    classifier.fit(hu_train, y_train)
-    y_pred = classifier.predict(hu_test)
-    print("Maximum Likelihood Bayes Classifier Classification Report:")
-    print(classification_report(y_test, y_pred))
+    def print_classification_report(self, y_pred):
+        """
+        Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
 
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <data_directory>")
-        sys.exit(1)
-    
-    # Ścieżka do katalogu z danymi
-    data_dir = sys.argv[1]
-    
-    # Ładowanie danych
-    hu_train, hu_test, y_train, y_test = load_data(data_dir)
-    
-    # Trenowanie i ewaluacja klasyfikatora Bayesa
-    train_and_evaluate_bayes(hu_train, y_train, hu_test, y_test)
+        Parameters:
+        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
+        """
+        print("Gaussian Bayes Classification Report:")
+        print(classification_report(self.y_test, y_pred))
 
-
-# Opis implementacji:
-
-#     load_data: Funkcja ładuje przetworzone dane Hu oraz etykiety klas z plików .npy. Zwraca cztery tablice: hu_train, hu_test, y_train, y_test.
-
-#     MaximumLikelihoodBayesClassifier: Klasa klasyfikatora Bayesa.
-#         __init__: Inicjalizuje puste struktury do przechowywania priorytetów klas, średnich oraz wariancji.
-#         fit: Trenuje klasyfikator, obliczając priorytety klas, średnie oraz wariancje dla każdej klasy.
-#         _calculate_likelihood: Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
-#         _calculate_posterior: Oblicza prawdopodobieństwo a posteriori dla każdej klasy i wybiera klasę z najwyższym prawdopodobieństwem.
-#         predict: Przewiduje klasy dla zbioru danych testowych.
-
-#     train_and_evaluate_bayes: Funkcja trenuje i ocenia klasyfikator Bayesa. Wyświetla raport klasyfikacji.
-
-#     Główna część skryptu: Ładuje dane, trenuje klasyfikator oraz ocenia jego wydajność.
 

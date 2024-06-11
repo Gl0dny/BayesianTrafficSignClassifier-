@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from control import Logger
 from problem import GTSRB
 from problem import HuImageData
+from method import GaussianBayesClassifier
 from method import HistogramBayesClassifier
 
 log_dir = 'debug/logs'
@@ -35,22 +36,25 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     #     log("Optional Step: Visualizing sample data started.")
     #     run_script('debug/debug_visualize_samples.py', args=[data_dir])
 
-    # # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
-    # logger.log("Step 3: Training Gaussian Naive Bayes model started.")
-    # run_script('method/train_gaussian_bayes.py', args=[data_dir])
+    # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
+    logger.log("Step 3: Training Gaussian Naive Bayes model started.")
+    g_classifier = GaussianBayesClassifier(X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
+    g_classifier.fit()
+
 
     # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
     logger.log("Step 4: Training Histogram Bayes model started.")
-    # run_script('method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
-    h_classifier = HistogramBayesClassifier(bins=bin_count, X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test, no_classes=no_classes)
+    h_classifier = HistogramBayesClassifier(bins=bin_count, X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
     h_classifier.fit()
     h_classifier.log_histograms(log_file=os.path.join(log_dir, 'train_histograms.txt'))
     
     # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
-
+    y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_probs.txt'))
+    g_classifier.print_classification_report(y_pred)
+    
     # Krok 6: Klasyfikacja - Uruchomienie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy) na zbiorze testowym
     # Predykcja i ocena modelu
-    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'predict_probs.txt'))
+    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_probs.txt'))
     h_classifier.print_classification_report(y_pred)
 
 if __name__ == '__main__':
