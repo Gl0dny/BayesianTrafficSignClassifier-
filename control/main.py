@@ -6,6 +6,10 @@ import os
 from datetime import datetime
 import argparse
 
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from problem import GTSRB
+
 python_executable = sys.executable  # dynamicznie pobiera ścieżkę do interpretera Pythona
 log_dir = 'logs'
 log_file = os.path.join(log_dir, 'progress_log.txt')
@@ -63,24 +67,25 @@ def run_script(script_name, args=None):
 def main(bin_count, data_dir, zip_path, debug):
     # Krok 1: Rozpakowanie danych
     log("Step 1: Extracting GTSRB data started.")
-    run_script('problem/extract_gtsrb.py', args=[data_dir, zip_path])
+    gtsrb=GTSRB(data_dir,zip_path)
+    gtsrb.extract()
 
-    # Krok 2: Przetwarzanie danych
-    log("Step 2: Preprocessing data started.")
-    run_script('problem/preprocess_data.py', args=[data_dir])
+    # # Krok 2: Przetwarzanie danych
+    # log("Step 2: Preprocessing data started.")
+    # run_script('problem/preprocess_data.py', args=[data_dir])
 
-    # Krok (opcjonalny): Wizualizacja przykładowych danych
-    if debug:
-        log("Optional Step: Visualizing sample data started.")
-        run_script('control/debug_visualize_samples.py', args=[data_dir])
+    # # Krok (opcjonalny): Wizualizacja przykładowych danych
+    # if debug:
+    #     log("Optional Step: Visualizing sample data started.")
+    #     run_script('control/debug_visualize_samples.py', args=[data_dir])
 
-    # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
-    log("Step 3: Training Gaussian Naive Bayes model started.")
-    run_script('method/train_gaussian_bayes.py', args=[data_dir])
+    # # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
+    # log("Step 3: Training Gaussian Naive Bayes model started.")
+    # run_script('method/train_gaussian_bayes.py', args=[data_dir])
 
-    # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
-    log("Step 4: Training Histogram Bayes model started.")
-    run_script('method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
+    # # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
+    # log("Step 4: Training Histogram Bayes model started.")
+    # run_script('method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
 
 if __name__ == '__main__':
     # Tworzenie lub czyszczenie pliku dziennika na początku
