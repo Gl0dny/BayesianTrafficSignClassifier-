@@ -63,24 +63,24 @@ def run_script(script_name, args=None):
 def main(bin_count, data_dir, zip_path, debug):
     # Krok 1: Rozpakowanie danych
     log("Step 1: Extracting GTSRB data started.")
-    run_script('../problem/extract_gtsrb.py', args=[data_dir, zip_path])
+    run_script('problem/extract_gtsrb.py', args=[data_dir, zip_path])
 
     # Krok 2: Przetwarzanie danych
     log("Step 2: Preprocessing data started.")
-    run_script('../problem/preprocess_data.py', args=[data_dir])
+    run_script('problem/preprocess_data.py', args=[data_dir])
 
     # Krok (opcjonalny): Wizualizacja przykładowych danych
     if debug:
         log("Optional Step: Visualizing sample data started.")
-        run_script('../control/debug_visualize_samples.py', args=[data_dir])
+        run_script('control/debug_visualize_samples.py', args=[data_dir])
 
     # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
     log("Step 3: Training Gaussian Naive Bayes model started.")
-    run_script('../method/train_gaussian_bayes.py', args=[data_dir])
+    run_script('method/train_gaussian_bayes.py', args=[data_dir])
 
     # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
     log("Step 4: Training Histogram Bayes model started.")
-    run_script('../method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
+    run_script('method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
 
 if __name__ == '__main__':
     # Tworzenie lub czyszczenie pliku dziennika na początku
@@ -92,8 +92,8 @@ if __name__ == '__main__':
     # Parser argumentów
     parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
     parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
-    parser.add_argument('--data_dir', type=str, default='../problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data scripts.')
-    parser.add_argument('--zip_path', type=str, default='../problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
+    parser.add_argument('--data_dir', type=str, default='problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data scripts.')
+    parser.add_argument('--zip_path', type=str, default='problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode to visualize sample data.')
     args = parser.parse_args()
 
