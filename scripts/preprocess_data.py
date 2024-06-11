@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 from sklearn.model_selection import train_test_split
 import cv2
+import sys
 
 def normalize_hu_moments(hu_moments):
     """
@@ -135,8 +136,12 @@ def log_hu_moments(hu_moments, labels, output_file):
             f.write('\n')
 
 if __name__ == '__main__':
-    # Ścieżka do katalogu z danymi
-    data_dir = 'data/GTSRB/Traffic_Signs/'
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <data_directory>")
+        sys.exit(1)
+    
+    # Pobieranie ścieżki do katalogu z danymi z argumentu wiersza poleceń
+    data_dir = sys.argv[1]
 
     # Podział na zestaw treningowy i testowy
     X_train, X_test, hu_train, hu_test, y_train, y_test = split_train_test_data(

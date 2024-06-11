@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 from sklearn.metrics import classification_report
 
@@ -110,14 +111,19 @@ def train_and_evaluate_bayes(hu_train, y_train, hu_test, y_test):
     print(classification_report(y_test, y_pred))
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <data_directory>")
+        sys.exit(1)
+    
     # Ścieżka do katalogu z danymi
-    data_dir = 'data/GTSRB/Traffic_Signs/'
+    data_dir = sys.argv[1]
     
     # Ładowanie danych
     hu_train, hu_test, y_train, y_test = load_data(data_dir)
     
     # Trenowanie i ewaluacja klasyfikatora Bayesa
     train_and_evaluate_bayes(hu_train, y_train, hu_test, y_test)
+
 
 # Opis implementacji:
 

@@ -8,7 +8,7 @@ class HistogramBayesClassifier:
     Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
     """
     
-    def __init__(self, bins=10):
+    def __init__(self, bins):
         """
         Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
 
@@ -93,15 +93,15 @@ class HistogramBayesClassifier:
         return class_probs
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python train_histogram_nb.py <num_bins>")
+    if len(sys.argv) != 3:
+        print("Usage: python script.py <data_directory> <num_bins>")
         sys.exit(1)
     
-    # Pobieranie liczby binów z argumentów wiersza poleceń
-    bins = int(sys.argv[1])
+    # Pobieranie ścieżki do katalogu z danymi i liczby binów z argumentów wiersza poleceń
+    data_dir = sys.argv[1]
+    bins = int(sys.argv[2])
 
-    # Załaduj dane treningowe i testowe z plików .npy
-    data_dir = 'data/GTSRB/Traffic_Signs/'
+    # Ładuj dane treningowe i testowe z plików .npy
     hu_train = np.load(os.path.join(data_dir, 'hu_train.npy'))
     y_train = np.load(os.path.join(data_dir, 'y_train.npy'))
     hu_test = np.load(os.path.join(data_dir, 'hu_test.npy'))

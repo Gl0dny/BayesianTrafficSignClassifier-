@@ -60,26 +60,26 @@ def run_script(script_name, args=None):
     else:
         log(f"{script_name} failed with error: {stderr}")
 
-def main(bin_count):
+def main(bin_count,data_dir, zip_path):
     # Krok 1: Rozpakowanie danych
     log("Step 1: Extracting GTSRB data started.")
-    run_script('data/GTSRB/extract_gtsrb.py')
+    run_script('data/GTSRB/extract_gtsrb.py', args=[data_dir, zip_path])
 
     # Krok 2: Przetwarzanie danych
     log("Step 2: Preprocessing data started.")
-    run_script('scripts/preprocess_data.py')
+    run_script('scripts/preprocess_data.py', args=[data_dir])
 
     # Krok 3: Wizualizacja przykładowych danych
     log("Step 3: Visualizing sample data started.")
-    run_script('scripts/visualize_samples.py')
+    run_script('scripts/debug_visualize_samples.py', args=[data_dir])
 
     # Krok 4: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
     log("Step 4: Training Gaussian Naive Bayes model started.")
-    run_script('scripts/train_gaussian_nb.py')
+    run_script('scripts/train_gaussian_bayes.py', args=[data_dir])
 
     # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
     log("Step 5: Training Histogram Bayes model started.")
-    run_script('scripts/train_histogram_nb.py', args=[str(bin_count)])
+    run_script('scripts/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
 
 if __name__ == '__main__':
     # Tworzenie lub czyszczenie pliku dziennika na początku
@@ -91,8 +91,10 @@ if __name__ == '__main__':
     # Parser argumentów
     parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
     parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
+    parser.add_argument('--data_dir', type=str, default='data/GTSRB/Traffic_Signs/', help='Directory containing the data scripts.')
+    parser.add_argument('--zip_path', type=str, default='data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
     args = parser.parse_args()
 
     log("Process started.")
-    main(args.bin_count)
+    main(args.bin_count, args.data_dir, args.zip_path)
     log("Process completed.")

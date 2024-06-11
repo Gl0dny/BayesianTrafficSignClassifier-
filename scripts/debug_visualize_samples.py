@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+import os
 
 def show_sample_images(images, labels, hu_moments, num_samples=10):
     """
@@ -26,10 +28,17 @@ def show_sample_images(images, labels, hu_moments, num_samples=10):
     plt.show()
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <data_directory>")
+        sys.exit(1)
+    
+    # Pobieranie ścieżki do katalogu z danymi z argumentu wiersza poleceń
+    data_dir = sys.argv[1]
+
     # Wczytywanie przetworzonych danych
-    X_train = np.load('data/GTSRB/Traffic_Signs/X_train.npy')
-    y_train = np.load('data/GTSRB/Traffic_Signs/y_train.npy')
-    hu_train = np.load('data/GTSRB/Traffic_Signs/hu_train.npy')
+    X_train = np.load(os.path.join(data_dir, 'X_train.npy'))
+    y_train = np.load(os.path.join(data_dir, 'y_train.npy'))
+    hu_train = np.load(os.path.join(data_dir, 'hu_train.npy'))
 
     # Wyświetlanie przykładowych obrazów z zestawu treningowego wraz z momentami Hu
     show_sample_images(X_train, y_train, hu_train)

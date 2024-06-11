@@ -1,39 +1,47 @@
 import os
 import zipfile
+import sys
 
-def extract_gtsrb(extract_folder='Traffic_Signs'):
+def extract_gtsrb(extract_path, zip_path):
     """
     Funkcja wypakowuje plik z danymi GTSRB (German Traffic Sign Recognition Benchmark) do określonego folderu.
 
     Parameters:
-    - extract_folder (str): Nazwa folderu, do którego zostaną wypakowane dane. Domyślnie 'Traffic_Signs'.
+    - extract_path (str): Ścieżka do folderu, do którego zostaną wypakowane dane.
+    - zip_path (str): Ścieżka do pliku zip z danymi.
     """
-    extract_path = 'data/GTSRB'
-    os.makedirs(extract_path, exist_ok=True)
 
     # Sprawdź, czy dane zostały już wypakowane
-    if os.path.exists(os.path.join(extract_path, extract_folder)):
+    if os.path.exists(extract_path):
         print("The GTSRB dataset has already been extracted.")
         return
-
-    zip_path = os.path.join(extract_path, 'gtsrb.zip')
+    
+    os.makedirs(extract_path, exist_ok=True)
     
     # Sprawdź, czy plik zip istnieje
     if not os.path.exists(zip_path):
-        print("Error: The file 'gtsrb.zip' does not exist in the data/GTSRB directory.")
+        print(f"Error: The file '{zip_path}' does not exist.")
         return
 
-    print(f"Extracting GTSRB dataset to {extract_folder} folder...")
+    print(f"Extracting GTSRB dataset to {extract_path} folder...")
     try:
         # Wypakuj zawartość pliku zip
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(os.path.join(extract_path, extract_folder))
+            zip_ref.extractall(extract_path)
         print("Extraction complete.")
     except zipfile.BadZipFile:
-        print("Error: The file 'gtsrb.zip' is not a valid zip file.")
+        print(f"Error: The file '{zip_path}' is not a valid zip file.")
 
 if __name__ == '__main__':
-    extract_gtsrb()
+    if len(sys.argv) != 3:
+        print("Usage: python extract_gtsrb.py <extract_path> <zip_path>")
+        sys.exit(1)
+    
+    extract_path = sys.argv[1]
+    zip_path = sys.argv[2]
+    extract_gtsrb(extract_path, zip_path)
+
+
 
 # Opis funkcji:
 # extract_gtsrb(extract_folder='Traffic_Signs')
