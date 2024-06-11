@@ -1,1 +1,1 @@
-from histogram_bayes import HistogramBayesClassifier
+from .histogram_bayes import HistogramBayesClassifier
