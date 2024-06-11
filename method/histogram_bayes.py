@@ -1,5 +1,7 @@
 import numpy as np
 from sklearn.metrics import classification_report
+import matplotlib.pyplot as plt
+
 class HistogramBayesClassifier:
     """
     Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
@@ -13,6 +15,8 @@ class HistogramBayesClassifier:
         - bins (int): Liczba przedziałów dla histogramów.
         - X_train (numpy.ndarray): Tablica z cechami treningowymi.
         - y_train (numpy.ndarray): Tablica z etykietami klas treningowych.
+        - X_test (numpy.ndarray): Tablica z cechami testowymi.
+        - y_test (numpy.ndarray): Tablica z etykietami klas testowych.
         """
         self.bins = bins
         self.histograms = {}
@@ -25,9 +29,6 @@ class HistogramBayesClassifier:
     def fit(self):
         """
         Trenuje klasyfikator na podstawie danych treningowych, obliczając histogramy dla każdej klasy i cechy.
-        
-        Parameters:
-        - log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
         """
         if self.X_train is None or self.y_train is None:
             raise ValueError("Brak danych treningowych. Ustaw dane treningowe przy inicjalizacji klasy.")
@@ -55,7 +56,6 @@ class HistogramBayesClassifier:
         Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
 
         Parameters:
-        - X (numpy.ndarray): Tablica z cechami testowymi.
         - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
 
         Returns:
@@ -64,13 +64,13 @@ class HistogramBayesClassifier:
         y_pred = []
         with open(predict_log_file, 'w') as f:
             for i, x in enumerate(self.X_test):
-                class_probs = self.calculate_class_probabilities(x)
+                class_probs = self._calculate_class_probabilities(x)
                 predicted_class = max(class_probs, key=class_probs.get)
                 y_pred.append(predicted_class)
-                f.write(f'Sample: {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
+                f.write(f'Sample {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
         return np.array(y_pred)
     
-    def calculate_class_probabilities(self, x):
+    def _calculate_class_probabilities(self, x):
         """
         Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
 
@@ -80,7 +80,6 @@ class HistogramBayesClassifier:
         Returns:
         - dict: Słownik z klasami i ich odpowiadającymi prawdopodobieństwami.
         """
-
         class_probs = {}
         for cls in self.classes:
             class_prob = 1.0
@@ -98,9 +97,42 @@ class HistogramBayesClassifier:
         Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
 
         Parameters:
-        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
         """
         print("Histogram Bayes Classification Report:")
         print(classification_report(self.y_test, y_pred))
     
-    
+    def print_histograms_for_class(self, cls):
+        """
+        Drukuje histogramy dla wszystkich cech dla określonej klasy.
+
+        Parameters:
+        - cls (int): Klasa, dla której mają być wyświetlone histogramy.
+        """
+        if cls not in self.histograms:
+            raise ValueError(f"Class {cls} not found in the trained model.")
+        
+        hists = self.histograms[cls]
+        num_features = len(hists)
+        
+        fig, axes = plt.subplots(num_features, 1, figsize=(12, num_features * 4))
+
+        if num_features == 1:
+            axes = [axes]
+
+        for i, (hist, bin_edges) in enumerate(hists):
+            ax = axes[i]
+            bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+            ax.bar(bin_centers, hist, width=np.diff(bin_edges), edgecolor='black', alpha=0.7)
+            ax.set_title(f'Class {cls} - Feature {i}')
+            ax.set_xlabel('Value')
+            ax.set_ylabel('Frequency')
+            ax.grid(True)
+            
+            # Adding the values on top of the bars
+            for j in range(len(hist)):
+                ax.text(bin_centers[j], hist[j], str(hist[j]), ha='center', va='bottom')
+
+        plt.tight_layout()
+        plt.show()
+

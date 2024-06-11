@@ -31,10 +31,10 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     print("Data preprocessing complete.")
 
 
-    # # Krok (opcjonalny): Wizualizacja przykładowych danych
-    # if debug:
-    #     log("Optional Step: Visualizing sample data started.")
-    #     run_script('debug/debug_visualize_samples.py', args=[data_dir])
+    # Krok (opcjonalny): Wizualizacja przykładowych danych
+    if debug:
+        logger.log("Optional Step: Visualizing sample data started.")
+        logger.run_script('debug/debug_visualize_samples.py', args=[data_dir])
 
     # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
     logger.log("Step 3: Training Gaussian Naive Bayes model started.")
@@ -48,6 +48,11 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     h_classifier.fit()
     h_classifier.log_histograms(log_file=os.path.join(log_dir, 'train_histograms.txt'))
     
+    # Krok (opcjonalny): Wizualizacja histogramów danej klasy
+    if debug:
+        logger.log("Optional Step: Visualizing sample histogram started.")
+        h_classifier.print_histograms_for_class(1)
+
     # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
     y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_probs.txt'))
     g_classifier.print_classification_report(y_pred)
@@ -66,7 +71,7 @@ if __name__ == '__main__':
     parser.add_argument('--test_size', type=float, default=0.2, help='Fraction of data to be used for testing (between 0.01 and 0.99).')
     parser.add_argument('--no_classes', type=int, default=8, help='Number of classes.')
     parser.add_argument('--no_features', type=int, default=7, help='Number of features (Hu moments) to use (between 1 and 7).')
-    parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
+    parser.add_argument('--bin_count', type=int, default=10, help='Number of bins for histogram model.')
     args = parser.parse_args()
 
     if not (2 < args.no_classes):
