@@ -22,9 +22,9 @@ def main():
     print("Step 4: Training Gaussian Naive Bayes model...")
     subprocess.run([python_executable, 'scripts/train_gaussian_nb.py'], check=True)
 
-    # # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa ( histogram wielowymiarowy )
-    # print("Step 5: Training Histogram Bayes model...")
-    # subprocess.run([python_executable, 'scripts/train_histogram_nb.py'], check=True)
+    # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa ( histogram wielowymiarowy )
+    print("Step 5: Training Histogram Bayes model...")
+    subprocess.run([python_executable, 'scripts/train_histogram_nb.py'], check=True)
 
 if __name__ == '__main__':
     main()
