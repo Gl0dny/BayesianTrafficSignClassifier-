@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.metrics import classification_report
 import os
+import sys
 
 class HistogramBayesClassifier:
     """
@@ -92,6 +93,13 @@ class HistogramBayesClassifier:
         return class_probs
 
 if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python train_histogram_nb.py <num_bins>")
+        sys.exit(1)
+    
+    # Pobieranie liczby binów z argumentów wiersza poleceń
+    bins = int(sys.argv[1])
+
     # Załaduj dane treningowe i testowe z plików .npy
     data_dir = 'data/GTSRB/Traffic_Signs/'
     hu_train = np.load(os.path.join(data_dir, 'hu_train.npy'))
@@ -100,7 +108,6 @@ if __name__ == '__main__':
     y_test = np.load(os.path.join(data_dir, 'y_test.npy'))
 
     # Trenowanie klasyfikatora Histogram Bayes
-    bins = 20
     h_classifier = HistogramBayesClassifier(bins=bins)
     h_classifier.fit(hu_train, y_train, train_log_file='logs/train_histograms.txt')
 
@@ -127,4 +134,3 @@ if __name__ == '__main__':
 
 #     train_histograms.txt: Plik zawiera histogramy dla każdej klasy i cechy, obliczone na danych treningowych.
 #     predict_probs.txt: Plik zawiera szczegółowe informacje o predykcji dla każdej próbki testowej, w tym przewidywaną klasę oraz prawdopodobieństwa klas.
-

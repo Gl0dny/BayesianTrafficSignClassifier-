@@ -4,6 +4,7 @@ import subprocess
 import sys
 import os
 from datetime import datetime
+import argparse
 
 python_executable = sys.executable  # dynamicznie pobiera ścieżkę do interpretera Pythona
 log_dir = 'logs'
@@ -36,15 +37,17 @@ def log(message):
     with open(log_file, 'a') as f:
         f.write(full_message)  # Zapisuje w pliku dziennika
 
-def run_script(script_name):
+def run_script(script_name, args=None):
     """
     Uruchamia skrypt i przekierowuje jego wyjście do pliku dziennika.
     
     Parameters:
     - script_name: Nazwa skryptu do uruchomienia.
+    - args: Lista argumentów do przekazania do skryptu.
     """
+    command = [python_executable, script_name] + (args if args else [])
     process = subprocess.Popen(
-        [python_executable, script_name],
+        command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
@@ -57,7 +60,7 @@ def run_script(script_name):
     else:
         log(f"{script_name} failed with error: {stderr}")
 
-def main():
+def main(bin_count):
     # Krok 1: Rozpakowanie danych
     log("Step 1: Extracting GTSRB data started.")
     run_script('data/GTSRB/extract_gtsrb.py')
@@ -76,7 +79,7 @@ def main():
 
     # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
     log("Step 5: Training Histogram Bayes model started.")
-    run_script('scripts/train_histogram_nb.py')
+    run_script('scripts/train_histogram_nb.py', args=[str(bin_count)])
 
 if __name__ == '__main__':
     # Tworzenie lub czyszczenie pliku dziennika na początku
@@ -84,6 +87,12 @@ if __name__ == '__main__':
     if os.path.exists(log_file):
         os.remove(log_file)
     sys.stdout = Tee(log_file, 'a')  # Przekierowanie wyjścia do pliku i terminala
+    
+    # Parser argumentów
+    parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
+    parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
+    args = parser.parse_args()
+
     log("Process started.")
-    main()
+    main(args.bin_count)
     log("Process completed.")
