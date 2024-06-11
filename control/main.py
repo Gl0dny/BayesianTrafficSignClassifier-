@@ -37,7 +37,7 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
         logger.run_script('debug/debug_visualize_samples.py', args=[data_dir])
 
     # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
-    logger.log("Step 3: Training Gaussian Naive Bayes model started.")
+    logger.log("Step 3: Training Gaussian Bayes model started.")
     g_classifier = GaussianBayesClassifier(X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
     g_classifier.fit()
 

@@ -35,22 +35,34 @@ class GaussianBayesClassifier:
             self.variance[c] = np.var(X_c, axis=0)
             self.class_prior[c] = len(X_c) / len(self.X_train)
 
-    def _calculate_likelihood(self, class_idx, x):
+    def predict(self, predict_log_file):
         """
-        Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
 
         Parameters:
-        - class_idx (int): Indeks klasy.
-        - x (numpy.ndarray): Pojedynczy przykład.
+        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
 
         Returns:
-        - numpy.ndarray: Prawdopodobieństwo warunkowe dla każdej cechy.
+        - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
         """
-        mean = self.mean[class_idx]
-        var = self.variance[class_idx]
-        numerator = np.exp(- ((x - mean) ** 2) / (2 * var))
-        denominator = np.sqrt(2 * np.pi * var)
-        return numerator / denominator
+        y_pred = []
+        with open(predict_log_file, 'w') as f:
+            for i, x in enumerate(self.X_test):
+                predicted_class = self._calculate_posterior(x)
+                y_pred.append(predicted_class)
+                class_probs = {cls: self._calculate_posterior(x) for cls in self.classes}
+                f.write(f'Sample {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
+        return np.array(y_pred)
+
+    def print_classification_report(self, y_pred):
+        """
+        Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+
+        Parameters:
+        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
+        """
+        print("Gaussian Bayes Classification Report:")
+        print(classification_report(self.y_test, y_pred))
 
     def _calculate_posterior(self, x):
         """
@@ -70,33 +82,19 @@ class GaussianBayesClassifier:
             posteriors.append(posterior)
         return self.classes[np.argmax(posteriors)]
 
-    def predict(self, predict_log_file):
+    def _calculate_likelihood(self, class_idx, x):
         """
-        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+        Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
 
         Parameters:
-        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+        - class_idx (int): Indeks klasy.
+        - x (numpy.ndarray): Pojedynczy przykład.
 
         Returns:
-        - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+        - numpy.ndarray: Prawdopodobieństwo warunkowe dla każdej cechy.
         """
-        y_pred = []
-        with open(predict_log_file, 'w') as f:
-            for i, x in enumerate(self.X_test):
-                predicted_class = self._calculate_posterior(x)
-                y_pred.append(predicted_class)
-                class_probs = {cls: self._calculate_posterior(x) for cls in self.classes}
-                f.write(f'Sample {i}: {x}\nPredicted class: {predicted_class}\nClass probabilities: {class_probs}\n\n')
-        return np.array(y_pred)
-    
-    def print_classification_report(self, y_pred):
-        """
-        Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
-
-        Parameters:
-        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
-        """
-        print("Gaussian Bayes Classification Report:")
-        print(classification_report(self.y_test, y_pred))
-
-
+        mean = self.mean[class_idx]
+        var = self.variance[class_idx]
+        numerator = np.exp(- ((x - mean) ** 2) / (2 * var))
+        denominator = np.sqrt(2 * np.pi * var)
+        return numerator / denominator

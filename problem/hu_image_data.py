@@ -11,7 +11,7 @@ class HuImageData:
         self.no_features = no_features
         self.test_size = test_size
 
-    def normalize_hu_moments(self, hu_moments):
+    def _normalize_hu_moments(self, hu_moments):
         """
         Normalizuje momenty Hu, stosując skalę logarytmiczną.
         
@@ -26,7 +26,7 @@ class HuImageData:
                 hu_moments[i][j] = -np.sign(hu_moments[i][j]) * np.log10(np.abs(hu_moments[i][j]))
         return hu_moments
 
-    def extract_hu_moments_image_data(self):
+    def _extract_hu_moments_image_data(self):
         """
         Funkcja ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
 
@@ -66,7 +66,7 @@ class HuImageData:
                     print("Error processing image:", e)
 
         # Normalizacja momentów Hu
-        hu_moments = self.normalize_hu_moments(np.array(hu_moments))
+        hu_moments = self._normalize_hu_moments(np.array(hu_moments))
 
         return np.array(images), hu_moments, np.array(labels)
 
@@ -97,7 +97,7 @@ class HuImageData:
             y_test = np.load(os.path.join(self.data_dir, 'y_test.npy'))
         else:
             # Wczytywanie i przetwarzanie danych
-            images, hu_moments, labels = self.extract_hu_moments_image_data()
+            images, hu_moments, labels = self._extract_hu_moments_image_data()
             print(f'Loaded {len(images)} images with {len(labels)} labels.')
 
             # Sprawdzanie kształtu danych
