@@ -2,29 +2,88 @@
 
 import subprocess
 import sys
+import os
+from datetime import datetime
 
 python_executable = sys.executable  # dynamicznie pobiera ścieżkę do interpretera Pythona
+log_dir = 'logs'
+log_file = os.path.join(log_dir, 'progress_log.txt')
+
+class Tee:
+    def __init__(self, name, mode):
+        os.makedirs(log_dir, exist_ok=True)  # Tworzy folder logs, jeśli nie istnieje
+        self.file = open(name, mode)
+        self.stdout = sys.stdout
+
+    def write(self, data):
+        self.file.write(data)
+        self.stdout.write(data)
+
+    def flush(self):
+        self.file.flush()
+        self.stdout.flush()
+
+def log(message):
+    """
+    Zapisuje wiadomość do pliku dziennika z datą i czasem.
+    
+    Parameters:
+    - message: Wiadomość do zapisania w pliku dziennika.
+    """
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    full_message = f'{timestamp} - {message}\n'
+    sys.stdout.write(full_message)  # Wyświetla w terminalu
+    with open(log_file, 'a') as f:
+        f.write(full_message)  # Zapisuje w pliku dziennika
+
+def run_script(script_name):
+    """
+    Uruchamia skrypt i przekierowuje jego wyjście do pliku dziennika.
+    
+    Parameters:
+    - script_name: Nazwa skryptu do uruchomienia.
+    """
+    process = subprocess.Popen(
+        [python_executable, script_name],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    stdout, stderr = process.communicate()
+    sys.stdout.write(stdout)
+    sys.stderr.write(stderr)
+    if process.returncode == 0:
+        log(f"{script_name} completed successfully.")
+    else:
+        log(f"{script_name} failed with error: {stderr}")
 
 def main():
     # Krok 1: Rozpakowanie danych
-    print("Step 1: Extracting GTSRB data...")
-    subprocess.run([python_executable, 'data/GTSRB/extract_gtsrb.py'], check=True)
+    log("Step 1: Extracting GTSRB data started.")
+    run_script('data/GTSRB/extract_gtsrb.py')
 
     # Krok 2: Przetwarzanie danych
-    print("Step 2: Preprocessing data...")
-    subprocess.run([python_executable, 'scripts/preprocess_data.py'], check=True)
+    log("Step 2: Preprocessing data started.")
+    run_script('scripts/preprocess_data.py')
 
     # Krok 3: Wizualizacja przykładowych danych
-    print("Step 3: Visualizing sample data...")
-    subprocess.run([python_executable, 'scripts/visualize_samples.py'], check=True)
+    log("Step 3: Visualizing sample data started.")
+    run_script('scripts/visualize_samples.py')
 
-    # Krok 4: Uczenie parametrycznego klasyfikatora Bayesa
-    print("Step 4: Training Gaussian Naive Bayes model...")
-    subprocess.run([python_executable, 'scripts/train_gaussian_nb.py'], check=True)
+    # Krok 4: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
+    log("Step 4: Training Gaussian Naive Bayes model started.")
+    run_script('scripts/train_gaussian_nb.py')
 
-    # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa ( histogram wielowymiarowy )
-    print("Step 5: Training Histogram Bayes model...")
-    subprocess.run([python_executable, 'scripts/train_histogram_nb.py'], check=True)
+    # Krok 5: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
+    log("Step 5: Training Histogram Bayes model started.")
+    run_script('scripts/train_histogram_nb.py')
 
 if __name__ == '__main__':
+    # Tworzenie lub czyszczenie pliku dziennika na początku
+    os.makedirs(log_dir, exist_ok=True)  # Tworzy folder logs, jeśli nie istnieje
+    if os.path.exists(log_file):
+        os.remove(log_file)
+    sys.stdout = Tee(log_file, 'a')  # Przekierowanie wyjścia do pliku i terminala
+    log("Process started.")
     main()
+    log("Process completed.")
