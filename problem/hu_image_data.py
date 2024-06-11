@@ -5,9 +5,11 @@ from sklearn.model_selection import train_test_split
 import cv2
 
 class HuImageData:
-    def __init__(self, data_dir, no_classes):
+    def __init__(self, data_dir, no_classes, no_features=7, test_size=0.2):
         self.data_dir = data_dir
-        self.classes = no_classes 
+        self.no_classes = no_classes
+        self.no_features = no_features
+        self.test_size = test_size
 
     def normalize_hu_moments(self, hu_moments):
         """
@@ -40,7 +42,7 @@ class HuImageData:
         hu_moments = []
         labels = []
 
-        for class_id in range(self.classes):  # Iteracja przez każdą klasę
+        for class_id in range(self.no_classes):  # Iteracja przez każdą klasę
             class_dir = os.path.join(self.data_dir, 'train', str(class_id))
             if not os.path.exists(class_dir):
                 continue
@@ -58,7 +60,7 @@ class HuImageData:
                     hu_moments_image = cv2.HuMoments(moments).flatten()
 
                     images.append(image_array)
-                    hu_moments.append(hu_moments_image)
+                    hu_moments.append(hu_moments_image[:self.no_features])  # Use only the specified number of features
                     labels.append(class_id)
                 except Exception as e:
                     print("Error processing image:", e)
@@ -68,7 +70,7 @@ class HuImageData:
 
         return np.array(images), hu_moments, np.array(labels)
 
-    def split_train_test_data(self, test_size=0.2, random_state=42):
+    def split_train_test_data(self, random_state=42):
         """
         Funkcja dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
 
@@ -104,7 +106,7 @@ class HuImageData:
 
             # Podział na zestaw treningowy i testowy
             X_train, X_test, hu_train, hu_test, y_train, y_test = train_test_split(
-                images, hu_moments, labels, test_size=test_size, random_state=random_state
+                images, hu_moments , labels, test_size=self.test_size, random_state=random_state
             )
             print(f'Train set size: {X_train.shape[0]}, Test set size: {X_test.shape[0]}')
 
@@ -137,4 +139,4 @@ class HuImageData:
                     f.write(f'Sample {last_sample_number + idx} Hu Moments: {hu_moments[moment_idx]}\n')
                 last_sample_number += len(class_indices)
                 f.write('\n')
-    
+
