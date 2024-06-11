@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from problem import GTSRB
 from problem import HuImageData
 from control import Logger
+from method import HistogramBayesClassifier
 
 log_dir = 'debug/logs'
 log_file = os.path.join(log_dir, 'progress_log.txt')
@@ -35,23 +36,27 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     #     run_script('debug/debug_visualize_samples.py', args=[data_dir])
 
     # # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
-    # log("Step 3: Training Gaussian Naive Bayes model started.")
+    # logger.log("Step 3: Training Gaussian Naive Bayes model started.")
     # run_script('method/train_gaussian_bayes.py', args=[data_dir])
 
-    # # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
-    # log("Step 4: Training Histogram Bayes model started.")
+    # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
+    logger.log("Step 4: Training Histogram Bayes model started.")
     # run_script('method/train_histogram_bayes.py', args=[data_dir, str(bin_count)])
+
+    # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
+
+    # Krok 6: Klasyfikacja - Uruchomienie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy) na zbiorze testowym
 
 if __name__ == '__main__':
     # Parser argumentów
     parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
-    parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
     parser.add_argument('--data_dir', type=str, default='problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data scripts.')
     parser.add_argument('--zip_path', type=str, default='problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode to visualize sample data.')
     parser.add_argument('--test_size', type=float, default=0.2, help='Fraction of data to be used for testing (between 0.01 and 0.99).')
     parser.add_argument('--no_classes', type=int, default=8, help='Number of classes.')
     parser.add_argument('--no_features', type=int, default=7, help='Number of features (Hu moments) to use (between 1 and 7).')
+    parser.add_argument('--bin_count', type=int, default=20, help='Number of bins for histogram model.')
     args = parser.parse_args()
 
     if not (2 < args.no_classes):
