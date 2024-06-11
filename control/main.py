@@ -9,9 +9,10 @@ import argparse
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from problem import GTSRB
+from problem import HuImageData
 
 python_executable = sys.executable  # dynamicznie pobiera ścieżkę do interpretera Pythona
-log_dir = 'logs'
+log_dir = 'debug/logs'
 log_file = os.path.join(log_dir, 'progress_log.txt')
 
 class Tee:
@@ -70,9 +71,16 @@ def main(bin_count, data_dir, zip_path, debug):
     gtsrb=GTSRB(data_dir,zip_path)
     gtsrb.extract()
 
-    # # Krok 2: Przetwarzanie danych
-    # log("Step 2: Preprocessing data started.")
+    # Krok 2: Przetwarzanie danych
+    log("Step 2: Preprocessing data started.")
     # run_script('problem/preprocess_data.py', args=[data_dir])
+    hu_image_data=HuImageData(data_dir, 8)
+    X_train, X_test, hu_train, hu_test, y_train, y_test = hu_image_data.split_train_test_data()
+    hu_image_data.log_hu_moments(hu_train, y_train, os.path.join(log_dir, 'hu_moments_log.txt'))
+    print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
+    print("Data preprocessing complete. Hu moments logged to", log_file)
+    print("Data preprocessing complete.")
+
 
     # # Krok (opcjonalny): Wizualizacja przykładowych danych
     # if debug:
