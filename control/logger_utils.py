@@ -14,7 +14,8 @@ class Tee:
         """
         log_dir = os.path.dirname(name)
         os.makedirs(log_dir, exist_ok=True)  # Tworzy folder, jeśli nie istnieje
-        self.file = open(name, mode)
+        self.name = name
+        self.mode = mode
         self.stdout = sys.stdout
 
     def write(self, data):
@@ -24,14 +25,14 @@ class Tee:
         Parameters:
         - data (str): Dane do zapisania.
         """
-        self.file.write(data)
+        with open(self.name, self.mode, encoding='utf-8') as f:
+            f.write(data)
         self.stdout.write(data)
 
     def flush(self):
         """
         Spłukuje buforowane dane do pliku i terminala.
         """
-        self.file.flush()
         self.stdout.flush()
 
 class Logger:
@@ -61,8 +62,6 @@ class Logger:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         full_message = f'{timestamp} - {message}\n'
         sys.stdout.write(full_message)  # Wyświetla w terminalu
-        with open(self.log_file, 'a') as f:
-            f.write(full_message)  # Zapisuje w pliku dziennika
 
     def run_script(self, script_name, args=None, python_executable=sys.executable):
         """
@@ -87,6 +86,7 @@ class Logger:
             self.log(f"{script_name} completed successfully.")
         else:
             self.log(f"{script_name} failed with error: {stderr}")
+
 
 # Dokumentacja:
 # Klasa Tee:
