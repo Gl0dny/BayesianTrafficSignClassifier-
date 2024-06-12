@@ -44,8 +44,11 @@ class Logger:
         """
         self.log_file = log_file
         os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Tworzy folder, jeśli nie istnieje
-        if os.path.exists(log_file):
-            os.remove(log_file)
+        try:
+            if os.path.exists(log_file):
+                os.remove(log_file)
+        except PermissionError as e:
+            print(f"PermissionError: {e}. Make sure the file is not being used by another process.")
         sys.stdout = Tee(log_file, 'a')  # Przekierowanie wyjścia do pliku i terminala
 
     def log(self, message):
