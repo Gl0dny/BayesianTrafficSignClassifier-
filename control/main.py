@@ -73,7 +73,7 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
 if __name__ == '__main__':
     # Parser argumentów
     parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
-    parser.add_argument('--data_dir', type=str, default='problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data scripts.')
+    parser.add_argument('--data_dir', type=str, default='problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data.')
     parser.add_argument('--zip_path', type=str, default='problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode to visualize sample data.')
     parser.add_argument('--test_size', type=float, default=0.2, help='Fraction of data to be used for testing (between 0.01 and 0.99).')
