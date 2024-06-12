@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from PIL import Image
+from PIL import Image  # Importowanie Image z biblioteki PIL (Pillow)
 from sklearn.model_selection import train_test_split
 import cv2
 

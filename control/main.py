@@ -6,14 +6,12 @@ import argparse
 import shutil
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from control import Logger
-from problem import GTSRB
-from problem import HuImageData
-from method import GaussianBayesClassifier
-from method import HistogramBayesClassifier
+from problem import GTSRB, HuImageData
+from method import GaussianBayesClassifier, HistogramBayesClassifier
 
 def clean_pipeline_data():
     """
-    Clean function to remove unnecessary directories.
+    Funkcja czyszcząca zbędne katalogi.
     """
     directories_to_remove = [
         'debug/logs',
@@ -120,6 +118,11 @@ if __name__ == '__main__':
     logger.log("Process completed.")
 
 # Dokumentacja:
+
+# Funkcja clean_pipeline_data:
+
+#     Opis: Funkcja czyszcząca zbędne katalogi.
+
 # Funkcja main:
 
 #     Opis: Główna funkcja uruchamiająca proces przetwarzania danych i trenowania modeli klasyfikacyjnych.

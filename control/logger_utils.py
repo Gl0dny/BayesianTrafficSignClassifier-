@@ -89,6 +89,7 @@ class Logger:
 
 
 # Dokumentacja:
+
 # Klasa Tee:
 
 #     Opis: Klasa Tee przechwytuje wyjście i przekierowuje je zarówno do pliku, jak i do terminala.
