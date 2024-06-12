@@ -3,6 +3,7 @@
 import sys
 import os
 import argparse
+import shutil
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from control import Logger
 from problem import GTSRB
@@ -10,8 +11,21 @@ from problem import HuImageData
 from method import GaussianBayesClassifier
 from method import HistogramBayesClassifier
 
-log_dir = 'debug/logs'
-log_file = os.path.join(log_dir, 'progress_log.txt')
+def clean_pipeline_data():
+    """
+    Clean function to remove unnecessary directories.
+    """
+    directories_to_remove = [
+        'debug/logs',
+        'problem/data/GTSRB/Traffic_Signs/',
+    ]
+    for directory in directories_to_remove:
+        if os.path.exists(directory):
+            if os.path.isdir(directory):
+                shutil.rmtree(directory)
+            else:
+                os.remove(directory)
+            print(f"Removing {directory}")
 
 def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_size):
     """
@@ -26,8 +40,7 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     - no_features (int): Liczba cech do użycia z momentów Hu.
     - test_size (float): Ułamek danych przeznaczonych na zestaw testowy.
     """
-    logger = Logger(log_file)
-
+    
     # Krok 1: Rozpakowanie danych
     logger.log("Step 1: Extracting GTSRB data started.")
     gtsrb = GTSRB(data_dir, zip_path)
@@ -80,6 +93,8 @@ if __name__ == '__main__':
     parser.add_argument('--no_classes', type=int, default=8, help='Number of classes.')
     parser.add_argument('--no_features', type=int, default=7, help='Number of features (Hu moments) to use (between 1 and 7).')
     parser.add_argument('--bin_count', type=int, default=10, help='Number of bins for histogram model.')
+    parser.add_argument('--clean', action='store_true', help='Optionally clean unnecessary directories before starting.')
+
     args = parser.parse_args()
 
     # Walidacja argumentów
@@ -90,8 +105,16 @@ if __name__ == '__main__':
     if not (1 <= args.no_features <= 7):
         raise ValueError("no_features must be between 1 and 7")
     
+    # Czyszczenie plików z poprzedniej konfiguracji pipeline'u
+    if args.clean:
+        print("Cleaning previously processed files.")
+        clean_pipeline_data()
+
     # Logowanie procesu
+    log_dir = 'debug/logs'
+    log_file = os.path.join(log_dir, 'progress_log.txt')
     logger = Logger(log_file)
+
     logger.log("Process started.")
     main(args.bin_count, args.data_dir, args.zip_path, args.debug, args.no_classes, args.no_features, args.test_size)
     logger.log("Process completed.")
