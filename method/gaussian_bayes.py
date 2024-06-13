@@ -98,3 +98,50 @@ class GaussianBayesClassifier:
         numerator = np.exp(- ((x - mean) ** 2) / (2 * var))
         denominator = np.sqrt(2 * np.pi * var)
         return numerator / denominator
+
+# Dokumentacja:
+# Klasa GaussianBayesClassifier:
+
+#     Opis: Klasyfikator Bayesa z wykorzystaniem rozkładów Gaussa do modelowania rozkładów cech.
+#     Metody:
+#         __init__(self, X_train, y_train, X_test, y_test): Inicjalizuje klasyfikator na podstawie danych treningowych i testowych.
+#         fit(self): Trenuje klasyfikator na podstawie danych treningowych, obliczając średnie, wariancje i priorytety klas.
+#         predict(self, predict_log_file): Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+#         print_classification_report(self, y_pred): Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+#         _calculate_posterior(self, x): Oblicza prawdopodobieństwo a posteriori dla każdej klasy i wybiera klasę z najwyższym prawdopodobieństwem.
+#         _calculate_likelihood(self, class_idx, x): Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+
+# Funkcja fit:
+
+#     Opis: Trenuje klasyfikator na podstawie danych treningowych, obliczając średnie, wariancje i priorytety klas.
+
+# Funkcja predict:
+
+#     Opis: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+#     Parametry:
+#         predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+#     Zwraca:
+#         numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+
+# Funkcja print_classification_report:
+
+#     Opis: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+#     Parametry:
+#         y_pred (numpy.ndarray): Przewidywane etykiety klas.
+
+# Funkcja _calculate_posterior:
+
+#     Opis: Oblicza prawdopodobieństwo a posteriori dla każdej klasy i wybiera klasę z najwyższym prawdopodobieństwem.
+#     Parametry:
+#         x (numpy.ndarray): Pojedynczy przykład.
+#     Zwraca:
+#         int: Klasa o najwyższym prawdopodobieństwie a posteriori.
+
+# Funkcja _calculate_likelihood:
+
+#     Opis: Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+#     Parametry:
+#         class_idx (int): Indeks klasy.
+#         x (numpy.ndarray): Pojedynczy przykład.
+#     Zwraca:
+#         numpy.ndarray: Prawdopodobieństwo warunkowe dla każdej cechy.

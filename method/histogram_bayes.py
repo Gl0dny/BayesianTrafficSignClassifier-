@@ -43,6 +43,9 @@ class HistogramBayesClassifier:
     def log_histograms(self, log_file):
         """
         Zapisuje histogramy do pliku tekstowego.
+
+        Parameters:
+        - log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
         """
         with open(log_file, 'w') as f:
             for cls, hists in self.histograms.items():
@@ -136,3 +139,53 @@ class HistogramBayesClassifier:
         plt.tight_layout()
         plt.show()
 
+# Dokumentacja:
+# Klasa HistogramBayesClassifier:
+
+#     Opis: Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
+#     Metody:
+#         __init__(self, bins, X_train, y_train, X_test, y_test): Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
+#         fit(self): Trenuje klasyfikator na podstawie danych treningowych, obliczając histogramy dla każdej klasy i cechy.
+#         log_histograms(self, log_file): Zapisuje histogramy do pliku tekstowego.
+#         predict(self, predict_log_file): Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+#         print_classification_report(self, y_pred): Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+#         print_histograms_for_class(self, cls): Drukuje histogramy dla wszystkich cech dla określonej klasy.
+#         _calculate_class_probabilities(self, x): Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+
+# Funkcja fit:
+
+#     Opis: Trenuje klasyfikator na podstawie danych treningowych, obliczając histogramy dla każdej klasy i cechy.
+
+# Funkcja log_histograms:
+
+#     Opis: Zapisuje histogramy do pliku tekstowego.
+#     Parametry:
+#         log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
+
+# Funkcja predict:
+
+#     Opis: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+#     Parametry:
+#         predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+#     Zwraca:
+#         numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+
+# Funkcja _calculate_class_probabilities:
+
+#     Opis: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+#     Parametry:
+#         x (numpy.ndarray): Pojedynczy przykład.
+#     Zwraca:
+#         dict: Słownik z klasami i ich odpowiadającymi prawdopodobieństwami.
+
+# Funkcja print_classification_report:
+
+#     Opis: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+#     Parametry:
+#         y_pred (numpy.ndarray): Przewidywane etykiety klas.
+
+# Funkcja print_histograms_for_class:
+
+#     Opis: Drukuje histogramy dla wszystkich cech dla określonej klasy.
+#     Parametry:
+#         cls (int): Klasa, dla której mają być wyświetlone histogramy.
