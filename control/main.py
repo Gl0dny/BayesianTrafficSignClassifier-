@@ -48,7 +48,7 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     logger.log("Step 2: Preprocessing data started.")
     hu_image_data = HuImageData(data_dir, no_classes, no_features, test_size)
     X_train, X_test, hu_train, hu_test, y_train, y_test = hu_image_data.split_train_test_data()
-    hu_image_data.log_hu_moments(hu_train, y_train, os.path.join(log_dir, 'hu_moments_log.txt'))
+    hu_image_data.log_hu_moments(hu_train, y_train, os.path.join(log_dir, 'hu_moments.log'))
     print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
     print("Data preprocessing complete. Hu moments logged to", log_file)
 
@@ -66,7 +66,7 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     logger.log("Step 4: Training Histogram Bayes model started.")
     h_classifier = HistogramBayesClassifier(bins=bin_count, X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
     h_classifier.fit()
-    h_classifier.log_histograms(log_file=os.path.join(log_dir, 'train_histograms.txt'))
+    h_classifier.log_histograms(log_file=os.path.join(log_dir, 'histograms.log'))
     
     # Krok (opcjonalny): Wizualizacja histogramów danej klasy
     if debug:
@@ -74,11 +74,11 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
         h_classifier.print_histograms_for_class(1)
 
     # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
-    y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_predictions.txt'))
+    y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_predictions.log'))
     g_classifier.print_classification_report(y_pred)
     
     # Krok 6: Klasyfikacja - Uruchomienie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy) na zbiorze testowym
-    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_predictions.txt'))
+    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_predictions.log'))
     h_classifier.print_classification_report(y_pred)
 
 if __name__ == '__main__':
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
     # Logowanie procesu
     log_dir = 'debug/logs'
-    log_file = os.path.join(log_dir, 'progress_log.txt')
+    log_file = os.path.join(log_dir, 'main.log')
     logger = Logger(log_file)
 
     logger.log("Process started.")

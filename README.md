@@ -279,13 +279,13 @@ g_classifier.print_classification_report(y_pred)
 Program składa się z kilku kroków, od rozpakowania danych, przez przetwarzanie i uczenie modeli klasyfikacyjnych, aż po przewidywanie klas na zbiorze testowym. Każdy krok jest starannie logowany, co umożliwia śledzenie postępu i diagnozowanie ewentualnych problemów. Dodatkowe kroki wizualizacji mogą być wykonywane w trybie debugowania, co pomaga w analizie i zrozumieniu danych.
 
 
-# Plik Logów Monitorujący Postęp: progress_log.txt
+# Plik Logów Monitorujący Postęp: `main.log`
 
 ## Opis
 
-`progress_log.txt` jest głównym plikiem logów, który monitoruje postęp całego procesu przetwarzania danych, trenowania modeli oraz inne istotne operacje wykonywane przez program. Jest to kluczowy plik do śledzenia, ponieważ zawiera chronologiczny zapis wszystkich ważnych kroków i ewentualnych błędów, które wystąpiły podczas działania programu.
+`main.log` jest głównym plikiem logów, który monitoruje postęp całego procesu przetwarzania danych, trenowania modeli oraz inne istotne operacje wykonywane przez program. Jest to kluczowy plik do śledzenia, ponieważ zawiera chronologiczny zapis wszystkich ważnych kroków i ewentualnych błędów, które wystąpiły podczas działania programu.
 
-## Przykład Zawartości `progress_log.txt`
+## Przykład Zawartości `main.log`
 
 ```
 2024-06-13 11:45:12 - Process started.
@@ -298,7 +298,7 @@ Loaded 2879 images with 2879 labels.
 (2879, 7)
 Train set size: 2303, Test set size: 576
 Train Hu moments size: 2303, Test Hu moments size: 576
-Data preprocessing complete. Hu moments logged to debug/logs\progress_log.txt
+Data preprocessing complete. Hu moments logged to debug/logs\main.log
 2024-06-13 11:45:42 - Step 3: Training Gaussian Bayes model started.
 2024-06-13 11:45:42 - Step 4: Training Histogram Bayes model started.
 
@@ -358,7 +358,7 @@ Plik `logger_utils.py` zawiera klasy Tee i Logger, które zarządzają zapisywan
 
 ## Generowane Pliki Logów
 
-### gaussian_bayes_predictions.log
+### `g_classifier_predictions.log`
 
 **Opis:**
 Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klasyfikator Gaussian Bayes.
@@ -372,7 +372,7 @@ Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klas
 Każda linia zawiera informacje dla jednej próbki:
 - Identyfikator próbki, prawdziwa klasa, przewidywana klasa, prawdopodobieństwa a posteriori, prawdopodobieństwa warunkowe.
 
-### histogram_bayes_predictions.log
+### `h_classifier_predictions.log`
 
 **Opis:**
 Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klasyfikator Histogram Bayes.
@@ -385,7 +385,7 @@ Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klas
 Każda linia zawiera informacje dla jednej próbki:
 - Identyfikator próbki, prawdziwa klasa, przewidywana klasa, prawdopodobieństwa klas.
 
-### hu_moments_class_*.txt
+### `hu_moments.log`
 
 **Opis:**
 Pliki zawierają obliczone momenty Hu dla próbek należących do określonej klasy.
@@ -398,7 +398,7 @@ Pliki zawierają obliczone momenty Hu dla próbek należących do określonej kl
 Każda linia zawiera momenty Hu dla jednej próbki:
 - Identyfikator próbki, wartości momentów Hu.
 
-### histograms_class_*.txt
+### `histograms.log`
 
 **Opis:**
 Pliki zawierają histogramy dla każdej cechy i klasy.
@@ -413,26 +413,53 @@ Każda linia zawiera wartości histogramu dla jednej cechy:
 
 ## Przykłady Plików Logów
 
-### Przykład wpisu w gaussian_bayes_predictions.log:
+### Przykład wpisu w `g_classifier_predictions.log`:
 ```
-Sample ID: 1234, True Class: 5, Predicted Class: 5, Posterior Probabilities: [0.1, 0.2, 0.3, 0.4], Likelihoods: [0.5, 0.6, 0.7, 0.8]
+Sample 0: [  2.16200585   6.99546412   8.97868627   8.7388965   17.76683571
+  12.90594896 -17.7310433 ]
+Predicted class: 0
+Class probabilities: {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}
+
+Sample 1: [  2.67146131   7.13761203   9.67750212   9.70987065 -19.40559961
+  13.92897663 -20.4178654 ]
+Predicted class: 3
+Class probabilities: {0: 3, 1: 3, 2: 3, 3: 3, 4: 3}
 ```
-### Przykład wpisu w histogram_bayes_predictions.log:
+### Przykład wpisu w `h_classifier_predictions.log`:
 ```
+Sample 0: [  2.16200585   6.99546412   8.97868627   8.7388965   17.76683571
+  12.90594896 -17.7310433 ]
+Predicted class: 0
+Class probabilities: {0: 0.0001115832769177358, 1: 7.402632433244765e-09, 2: 0.0, 3: 1.2183058381188396e-07, 4: 1.914566511006075e-07}
+
+Sample 1: [  2.67146131   7.13761203   9.67750212   9.70987065 -19.40559961
+  13.92897663 -20.4178654 ]
+Predicted class: 0
+Class probabilities: {0: 6.810747944179981e-05, 1: 9.922832670994054e-06, 2: 2.1797952038828098e-05, 3: 2.6278723219514598e-05, 4: 3.2232811716693285e-06}
 ```
-### Przykład wpisu w hu_moments_class_5.txt:
+### Przykład wpisu w `hu_moments.log`:
 ```
+Class 0 Hu Moments:
+Sample 1 Hu Moments: [  2.43038677   6.09687194   9.14487504   9.12304103 -18.35530063
+  12.49486787 -18.47639574]
+Sample 2 Hu Moments: [  2.58046413   8.72705975  12.73975729  11.98774375  24.67979376
+  16.69358992 -24.40558514]
 ```
-### Przykład wpisu w histograms_class_2.txt:
+### Przykład wpisu w `histograms.log`:
 ```
+Class 0 histograms:
+Feature 0: histogram: [ 6  5 71 99 69 62 74 59 36 43], bin_edges: [1.79549735 1.9165121  2.03752686 2.15854161 2.27955636 2.40057112
+ 2.52158587 2.64260062 2.76361538 2.88463013 3.00564488]
+Feature 1: histogram: [ 40  86 111 140  75  38  21   5   5   3], bin_edges: [ 5.74120241  6.24296646  6.74473052  7.24649458  7.74825864  8.2500227
+  8.75178675  9.25355081  9.75531487 10.25707893 10.75884299]
 ```
 
 ## Uwagi
 
 - **Pliki logów są generowane w odpowiednich momentach pracy programu, w zależności od wykonywanych operacji.**
-- **Pliki `gaussian_bayes_predictions.log` i `histogram_bayes_predictions.log` są generowane po wykonaniu predykcji przez odpowiednie klasyfikatory.**
-- **Pliki `hu_moments_class_*.txt` są generowane podczas obliczania momentów Hu.**
-- **Pliki `histograms_class_*.txt` są generowane podczas tworzenia histogramów dla cech i klas.**
+- **Pliki `g_classifier_predictions.log` i `h_classifier_predictions.log` są generowane po wykonaniu predykcji przez odpowiednie klasyfikatory.**
+- **Pliki `hu_moments.log` są generowane podczas obliczania momentów Hu.**
+- **Pliki `histograms.log` są generowane podczas tworzenia histogramów dla cech i klas.**
 
 
 ## Opis Głównych Plików
