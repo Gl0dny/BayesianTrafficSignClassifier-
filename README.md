@@ -4,58 +4,6 @@
 
 Ten projekt ma na celu klasyfikację znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
 
-## Wymagane moduły
-Plik requirements.txt zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
-
-Wymagane moduły można zainstalować za pomocą polecenia pip install -r requirements.txt, co zapewni, że wszystkie niezbędne pakiety zostaną zainstalowane w odpowiednich wersjach, aby projekt działał prawidłowo.
-
-Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrpty setup.bat or setup.sh.
-
-Krok 1: Instalacja Wymaganych modułów
-
-Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
-
-Dla Windows:
-
-setup.bat
-
-Dla Unix/Linux:
-
-setup.sh
-
-Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
-
-pip install -r setup/requirements.txt
-
-Krok 2: Uruchomienie Projektu
-
-Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
-
-python control/main.py
-
-Szczegółowy Opis Kroków
-
-    Rozpakowywanie danych: Skrypt problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
-
-    Przetwarzanie danych: Skrypt problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
-
-    Wizualizacja danych: Skrypt debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
-
-    Trenowanie modeli: Skrypty method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny (Gaussian Naive Bayes) oraz nieparametryczny (Histogram Bayes) klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
-
-Argumenty Skryptu main.py
-
-Skrypt main.py może przyjmować różne argumenty konfiguracyjne. Oto przykład uruchomienia z argumentami:
-
-bash
-
-python control/main.py --data_dir problem/data/GTSRB/ --output_dir results/
-
-    --data_dir: Ścieżka do katalogu z danymi.
-    --output_dir: Ścieżka do katalogu, gdzie mają być zapisane wyniki.
-
-Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
-
 ## Struktura Projektu
 
     BayesianTrafficSignClassifier
@@ -118,6 +66,51 @@ Poniżej znajduje się krótki opis głównych katalogów i plików:
   - `setup.sh`: Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
 
 
+## Wymagane moduły
+Plik requirements.txt zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
+
+Wymagane moduły można zainstalować za pomocą polecenia pip install -r requirements.txt, co zapewni, że wszystkie niezbędne pakiety zostaną zainstalowane w odpowiednich wersjach, aby projekt działał prawidłowo.
+
+Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrpty setup.bat or setup.sh.
+
+Krok 1: Instalacja Wymaganych modułów
+
+Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
+
+Dla Windows:
+```
+setup.bat
+```
+Dla Unix/Linux:
+```
+setup.sh
+```
+Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
+```
+pip install -r setup/requirements.txt
+```
+Krok 2: Uruchomienie Projektu
+
+Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
+```
+python control/main.py
+```
+## Szczegółowy Opis Kroków
+
+    Rozpakowywanie danych: Skrypt problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
+
+    Przetwarzanie danych: Skrypt problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
+
+    Wizualizacja danych: Skrypt debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
+
+    Trenowanie modeli: Skrypty method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny (Gaussian Naive Bayes) oraz nieparametryczny (Histogram Bayes) klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
+
+## Argumenty Skryptu main.py
+
+Skrypt main.py może przyjmować różne argumenty konfiguracyjne. Oto przykład uruchomienia z argumentami:
+
+
+Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
     Do raportu:
     Wsparcie (Support):
