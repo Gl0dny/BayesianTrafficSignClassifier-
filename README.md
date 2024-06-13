@@ -1,7 +1,5 @@
 # Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
 
-## Opis Projektu
-
 Ten projekt ma na celu klasyfikację znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
 
 ## Struktura Projektu
@@ -79,11 +77,11 @@ Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zale
 
 Dla Windows:
 ```
-setup.bat
+.\setup\setup.bat
 ```
 Dla Unix/Linux:
 ```
-setup.sh
+./setup/setup.sh
 ```
 Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
 ```
@@ -97,22 +95,24 @@ python control/main.py
 ```
 ## Szczegółowy Opis Kroków
 
-    Rozpakowywanie danych: Skrypt problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
+Rozpakowywanie danych: problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
 
-    Przetwarzanie danych: Skrypt problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
+Przetwarzanie danych: problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
 
-    Wizualizacja danych: Skrypt debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
+Wizualizacja danych: debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
 
-    Trenowanie modeli: Skrypty method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny (Gaussian Naive Bayes) oraz nieparametryczny (Histogram Bayes) klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
+Trenowanie modeli: method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny oraz nieparametryczny klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
 
 ## Argumenty Skryptu main.py
 
-Skrypt main.py może przyjmować różne argumenty konfiguracyjne. Oto przykład uruchomienia z argumentami:
+Skrypt main.py może przyjmować różne argumenty konfiguracyjne. 
+
+Oto przykład uruchomienia z argumentami:
 
 
 Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
-    Do raportu:
+    <!-- Do raportu:
     Wsparcie (Support):
 
     Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
@@ -122,4 +122,4 @@ Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikac
     Średnie wartości dla wszystkich klas:
 
     Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
-    Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora
+    Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->
