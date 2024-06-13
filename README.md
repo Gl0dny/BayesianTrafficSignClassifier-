@@ -64,69 +64,84 @@ Poniżej znajduje się krótki opis głównych katalogów i plików:
   - `setup.sh`: Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
 
 
-## Wymagane moduły
+## Instalacja i Konfiguracja Środowiska
+
+### Wymagane moduły
 Plik `requirements.txt` zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
 
 Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrypty `setup.bat` or `setup.sh`.
 
-### Krok 1: Instalacja Wymaganych modułów
+### Windows
 
-Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
+1. Uruchom `setup/setup.bat`.
+2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe.
+3. Środowisko wirtualne zostanie aktywowane.
+4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
+5. Pakiety z `requirements.txt` zostaną zainstalowane.
+6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
 
-Dla Windows:
-```
-.\setup\setup.bat
-```
-Dla Unix/Linux:
-```
-./setup/setup.sh
-```
+### Unix
+
+1. Uruchom `setup/setup.sh`.
+2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe przy użyciu `python3 -m venv`.
+3. Środowisko wirtualne zostanie aktywowane poprzez `source venv/bin/activate`.
+4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
+5. Pakiety z `requirements.txt` zostaną zainstalowane.
+6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
+
 Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
 ```
 pip install -r setup/requirements.txt
 ```
-### Krok 2: Uruchomienie Projektu
+
+## Uruchomienie Projektu
 
 Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
 ```
 python control/main.py
 ```
-## Szczegółowy Opis Kroków
-
-<!-- ### Rozpakowywanie danych: 
-problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
-
-### Przetwarzanie danych: 
-problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
-
-### Wizualizacja danych: 
-debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
-
-### Trenowanie modeli: 
-method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny oraz nieparametryczny klasyfikator Bayesa i generują raporty z wyników klasyfikacji. -->
 
 ## Argumenty Skryptu main.py
 
 Skrypt main.py może przyjmować różne argumenty konfiguracyjne. 
 
-Oto przykład uruchomienia z argumentami:
+
 
 
 Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
-<!-- Do raportu:
-Wsparcie (Support):
+### control/main.py
 
-Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
-Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
-Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
+```
+python control/main.py
+```
 
-Średnie wartości dla wszystkich klas:
+Główny plik uruchamiający proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
 
-Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
-Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->
+#### Parametry:
+- `bin_count` (int): Liczba koszyków dla modelu histogramowego.
+- `data_dir` (str): Ścieżka do katalogu z danymi.
+- `zip_path` (str): Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
+- `debug` (bool): Flaga włączająca tryb debugowania.
+- `no_classes` (int): Liczba klas znaków drogowych. ( default: 5 - ze względu na ograniczenie rozmiaru projektu do 20 MB )
+- `no_features` (int): Liczba cech do użycia z momentów Hu. ( default: 7 - liczba momentów Hu )
+- `test_size` (float): Ułamek danych przeznaczonych na zestaw testowy. ( default: 0.2 )
+- `clean` (bool): Flaga włączająca tryb czyszczenia.
 
-# README
+#### Argumenty:
+- `--data_dir`: Katalog zawierający dane.
+- `--zip_path`: Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
+- `--debug`: Włącza tryb debugowania do wizualizacji danych.
+- `--test_size`: Ułamek danych do zestawu testowego (między 0.01 a 0.99).
+- `--no_classes`: Liczba klas. ( zależne od ilości posiadanych danych/klas )
+- `--no_features`: Liczba cech (momentów Hu) do użycia (między 1 a 7).
+- `--bin_count`: Liczba koszyków dla modelu histogramowego.
+- `--clean`: Włącza tryb czyszczenia plików generowanych podczas przetwarzania danych.    
+
+Oto przykład uruchomienia z argumentami:
+```
+python control/main.py --clean --debug --test_size 0.2 --no_classes 5 --no_features 7 --bin_count 10
+```
 
 ## Szczegółowy Opis Działania Programu
 
@@ -270,53 +285,70 @@ Program składa się z kilku kroków, od rozpakowania danych, przez przetwarzani
 
 `progress_log.txt` jest głównym plikiem logów, który monitoruje postęp całego procesu przetwarzania danych, trenowania modeli oraz inne istotne operacje wykonywane przez program. Jest to kluczowy plik do śledzenia, ponieważ zawiera chronologiczny zapis wszystkich ważnych kroków i ewentualnych błędów, które wystąpiły podczas działania programu.
 
-## Zawartość
-
-- **Czas rozpoczęcia i zakończenia operacji:** Każdy wpis zawiera znacznik czasu, który informuje o momencie rozpoczęcia i zakończenia danej operacji.
-- **Opisy wykonywanych kroków:** Każdy wpis zawiera opis wykonywanej operacji, co pozwala na łatwe śledzenie, które etapy zostały już zakończone.
-- **Komunikaty o błędach:** W przypadku wystąpienia błędów, są one zapisywane w pliku wraz z odpowiednim komunikatem i znacznikiem czasu.
-- **Informacje o statusie:** Każdy wpis może zawierać dodatkowe informacje o statusie, takie jak liczba przetworzonych próbek, dokładność modelu, itp.
-
 ## Przykład Zawartości `progress_log.txt`
 
 ```
-[2024-06-13 10:00:00] INFO: Rozpoczęcie procesu przetwarzania danych
-[2024-06-13 10:01:00] INFO: Wypakowywanie danych GTSRB z pliku zip
-[2024-06-13 10:02:00] INFO: Dane GTSRB zostały pomyślnie wypakowane
-[2024-06-13 10:05:00] INFO: Obliczanie momentów Hu dla obrazów
-[2024-06-13 10:10:00] INFO: Momentu Hu zostały obliczone dla 1000 obrazów
-[2024-06-13 10:15:00] INFO: Podział danych na zestawy treningowe i testowe
-[2024-06-13 10:20:00] INFO: Dane zostały podzielone: 800 treningowych, 200 testowych
-[2024-06-13 10:30:00] INFO: Trening modelu Gaussian Bayes
-[2024-06-13 10:45:00] INFO: Model Gaussian Bayes został wytrenowany
-[2024-06-13 10:50:00] INFO: Przewidywanie klas za pomocą modelu Gaussian Bayes
-[2024-06-13 11:00:00] INFO: Przewidywanie zakończone, wyniki zapisane do gaussian_bayes_predictions.log
-[2024-06-13 11:05:00] INFO: Trening modelu Histogram Bayes
-[2024-06-13 11:20:00] INFO: Model Histogram Bayes został wytrenowany
-[2024-06-13 11:25:00] INFO: Przewidywanie klas za pomocą modelu Histogram Bayes
-[2024-06-13 11:35:00] INFO: Przewidywanie zakończone, wyniki zapisane do histogram_bayes_predictions.log
-[2024-06-13 11:40:00] INFO: Cały proces został zakończony pomyślnie
+2024-06-13 11:45:12 - Process started.
+2024-06-13 11:45:12 - Step 1: Extracting GTSRB data started.
+Extracting GTSRB dataset to problem/data/GTSRB/Traffic_Signs/ folder...
+Extraction complete.
+2024-06-13 11:45:14 - Step 2: Preprocessing data started.
+Loaded 2879 images with 2879 labels.
+(2879, 64, 64) (2879,)
+(2879, 7)
+Train set size: 2303, Test set size: 576
+Train Hu moments size: 2303, Test Hu moments size: 576
+Data preprocessing complete. Hu moments logged to debug/logs\progress_log.txt
+2024-06-13 11:45:42 - Step 3: Training Gaussian Bayes model started.
+2024-06-13 11:45:42 - Step 4: Training Histogram Bayes model started.
+
+Histogram Bayes Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.47      0.68      0.56       142
+           1       0.54      0.60      0.57       181
+           2       0.19      0.27      0.22        48
+           3       0.22      0.13      0.16        60
+           4       0.44      0.19      0.27       145
+
+    accuracy                           0.44       576
+   macro avg       0.37      0.38      0.36       576
+weighted avg       0.43      0.44      0.42       576
+
+2024-06-13 11:45:42 - Process completed.
 ```
 
-### Sposób Działania
+# Raport klasyfikacji - przykład
 
-1. **Inicjalizacja logowania:** Na początku działania programu, `progress_log.txt` jest tworzony lub otwierany (jeśli już istnieje), a wszystkie wpisy są dodawane na końcu pliku.
-2. **Zapis operacji:** Każdy kluczowy krok procesu przetwarzania danych, treningu modeli oraz predykcji jest zapisywany w pliku z odpowiednim komunikatem i znacznikiem czasu.
-3. **Monitorowanie błędów:** W przypadku wystąpienia błędu, odpowiedni komunikat o błędzie jest zapisywany do pliku, co pozwala na łatwe zdiagnozowanie problemów.
-4. **Zakończenie procesu:** Po zakończeniu całego procesu, zapisywana jest informacja o pomyślnym zakończeniu wraz z czasem zakończenia.
+    Gaussian Bayes Classification Report:
+                precision    recall  f1-score   support
 
-## Korzyści z Użycia `progress_log.txt`
+            0       0.51      0.68      0.58       142
+            1       0.51      0.71      0.59       181
+            2       0.28      0.31      0.30        48
+            3       0.37      0.22      0.27        60
+            4       0.35      0.11      0.17       145
 
-- **Śledzenie postępu:** Umożliwia śledzenie postępu całego procesu, co jest szczególnie przydatne przy długotrwałych operacjach.
-- **Diagnostyka błędów:** Pomaga w diagnozowaniu problemów poprzez zapisywanie komunikatów o błędach.
-- **Dokumentacja:** Służy jako dokumentacja przebiegu działania programu, co może być przydatne przy analizie wyników i optymalizacji procesów.
+        accuracy                           0.47       576
+    macro avg       0.40      0.41      0.38       576
+    weighted avg       0.44      0.47      0.43       576
 
-## Uwagi
 
-- **Regularne monitorowanie:** Zaleca się regularne monitorowanie `progress_log.txt` podczas działania programu, aby szybko wychwycić ewentualne problemy.
-- **Rozmiar pliku:** W przypadku długotrwałych operacji lub dużej ilości danych, rozmiar pliku logów może znacznie wzrosnąć. W takim przypadku warto zaimplementować mechanizmy archiwizacji lub rotacji logów.
+## Ogólna wydajność modelu
+- **Accuracy (dokładność):** 0.47
+  - Dokładność oznacza odsetek poprawnie sklasyfikowanych próbek spośród wszystkich próbek. W tym przypadku model prawidłowo sklasyfikował 47% wszystkich próbek.
 
-Plik `progress_log.txt` jest nieocenionym narzędziem dla programistów i administratorów systemu, zapewniając pełny wgląd w przebieg działania programu i pomagając w szybkim rozwiązywaniu problemów.
+## Wydajność dla poszczególnych klas
+
+### Klasa 0:
+- **Precision (precyzja):** 0.51
+  - Precyzja to stosunek liczby prawdziwie pozytywnych wyników do sumy prawdziwie pozytywnych i fałszywie pozytywnych wyników. Oznacza to, że z wszystkich próbek sklasyfikowanych jako klasa 0, 51% było poprawnie sklasyfikowanych.
+- **Recall (czułość):** 0.68
+  - Czułość to stosunek liczby prawdziwie pozytywnych wyników do sumy prawdziwie pozytywnych i fałszywie negatywnych wyników. Oznacza to, że z wszystkich prawdziwych próbek klasy 0, 68% zostało prawidłowo sklasyfikowanych jako klasa 0.
+- **F1-score:** 0.58
+  - F1-score to średnia harmoniczna precyzji i czułości. Jest to miara ogólnej wydajności modelu dla tej klasy.
+- **Support:** 142
+  - Support to liczba rzeczywistych wystąpień danej klasy w zbiorze danych testowych.
 
 # Pliki Logów
 
@@ -401,3 +433,106 @@ Sample ID: 1234, True Class: 5, Predicted Class: 5, Posterior Probabilities: [0.
 - **Pliki `gaussian_bayes_predictions.log` i `histogram_bayes_predictions.log` są generowane po wykonaniu predykcji przez odpowiednie klasyfikatory.**
 - **Pliki `hu_moments_class_*.txt` są generowane podczas obliczania momentów Hu.**
 - **Pliki `histograms_class_*.txt` są generowane podczas tworzenia histogramów dla cech i klas.**
+
+
+## Opis Głównych Plików
+
+### control/logger_utils.py
+
+Zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
+
+#### Klasa Tee:
+- Przechwytuje wyjście i przekierowuje je zarówno do pliku, jak i do terminala.
+
+#### Klasa Logger:
+- Zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
+
+### debug/debug_visualize_samples.py
+
+Wyświetla próbki obrazów z odpowiadającymi im momentami Hu w trybie debugowania.
+
+#### Funkcja show_sample_images:
+- Wyświetla próbki obrazów z momentami Hu.
+- Parametry:
+  - `images` (ndarray): Tablica z obrazami.
+  - `labels` (ndarray): Tablica z etykietami klas.
+  - `hu_moments` (ndarray): Tablica z momentami Hu.
+  - `num_samples` (int): Liczba próbek do wyświetlenia (domyślnie 10).
+
+### problem/gtsrb.py
+
+Zarządza wypakowywaniem danych GTSRB (German Traffic Sign Recognition Benchmark) z pliku zip.
+
+#### Klasa GTSRB:
+- `__init__`: Inicjalizuje klasę z określonymi ścieżkami do wypakowania i pliku zip.
+- `extract`: Wypakowuje plik z danymi GTSRB do określonego folderu.
+
+### problem/hu_image_data.py
+
+Przetwarza obrazy znaków drogowych, oblicza momenty Hu oraz dzieli dane na zestawy treningowe i testowe.
+
+#### Klasa HuImageData:
+- `__init__`: Inicjalizuje klasę z określonymi parametrami.
+- `_normalize_hu_moments`: Normalizuje momenty Hu, stosując skalę logarytmiczną.
+- `_extract_hu_moments_image_data`: Ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
+- `split_train_test_data`: Dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
+- `log_hu_moments`: Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
+
+### setup/setup.bat
+
+Skrypt instalacyjny dla systemu Windows.
+
+#### Działanie:
+- Sprawdza, czy środowisko wirtualne nie istnieje, a jeśli nie, tworzy nowe środowisko wirtualne.
+- Aktywuje środowisko wirtualne.
+- Wyświetla listę zainstalowanych pakietów przed i po instalacji nowych pakietów.
+- Instaluje wymagania z pliku requirements.txt.
+- Wyświetla instrukcje dotyczące uruchamiania głównego skryptu oraz dezaktywacji środowiska wirtualnego.
+
+### setup/setup.sh
+
+Skrypt instalacyjny dla systemów Unix.
+
+#### Działanie:
+- Tworzy środowisko wirtualne, jeśli nie istnieje.
+- Aktywuje środowisko wirtualne.
+- Wyświetla listę zainstalowanych pakietów przed i po instalacji nowych pakietów.
+- Instaluje wymagania z pliku requirements.txt.
+- Wyświetla instrukcje dotyczące uruchamiania głównego skryptu oraz dezaktywacji środowiska wirtualnego.
+
+### method/gaussian_bayes.py
+
+Klasyfikator Bayesa z wykorzystaniem rozkładów Gaussa do modelowania rozkładów cech.
+
+#### Klasa GaussianBayesClassifier:
+- `__init__`: Inicjalizuje klasyfikator na podstawie danych treningowych i testowych.
+- `fit`: Trenuje klasyfikator na podstawie danych treningowych.
+- `predict`: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+- `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+- `_calculate_posterior`: Oblicza prawdopodobieństwo a posteriori dla każdej klasy.
+- `_calculate_likelihood`: Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+
+### method/histogram_bayes.py
+
+Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
+
+#### Klasa HistogramBayesClassifier:
+- `__init__`: Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
+- `fit`: Trenuje klasyfikator na podstawie danych treningowych.
+- `log_histograms`: Zapisuje histogramy do pliku tekstowego.
+- `predict`: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+- `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+- `_calculate_class_probabilities`: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+- `print_histograms_for_class`: Drukuje histogramy dla wszystkich cech dla określonej klasy.
+
+<!-- Do raportu:
+Wsparcie (Support):
+
+Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
+Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
+Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
+
+Średnie wartości dla wszystkich klas:
+
+Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
+Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->
