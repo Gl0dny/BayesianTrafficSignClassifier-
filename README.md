@@ -113,28 +113,68 @@ python control/main.py --data_dir problem/data/GTSRB/ --output_dir results/
 Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
 ## Struktura Projektu
-project_root/
+
+BAYESIANTRAFFICSIGNCLASSIFIER
 │
-├── data/ # Katalog zawierający dane
-│ ├── GTSRB/ # Katalog z danymi GTSRB
-│ │ └── Traffic_Signs/ # Przetworzone dane i cechy
-│ │ ├── X_train.npy # Obrazy do trenowania
-│ │ ├── X_test.npy # Obrazy do testowania
-│ │ ├── hu_train.npy # Hu momenty do trenowania
-│ │ ├── hu_test.npy # Hu momenty do testowania
-│ │ ├── y_train.npy # Etykiety do trenowania
-│ │ └── y_test.npy # Etykiety do testowania
-│ └── extract_gtsrb.py # Skrypt do rozpakowywania danych
+├── control
+│ ├── init.py
+│ ├── logger_utils.py
+│ └── main.py
 │
-├── scripts/ # Katalog zawierający skrypty
-│ ├── main.py # Główny skrypt do uruchamiania projektu
-│ ├── extract_gtsrb.py # Skrypt do rozpakowywania danych GTSRB
-│ ├── preprocess_data.py # Skrypt do przetwarzania danych i obliczania Hu momentów
-│ ├── visualize_samples.py # Skrypt do wizualizacji danych
-│ ├── train_gaussian_nb.py # Skrypt do trenowania parametrycznego klasyfikatora Bayesa
-│ └── train_histogram_nb.py # Skrypt do trenowania nieparametrycznego klasyfikatora Bayesa
+├── debug
+│ └── debug_visualize_samples.py
 │
-└── models/ # Katalog do przechowywania wytrenowanych modeli
+├── method
+│ ├── init.py
+│ ├── gaussian_bayes.py
+│ └── histogram_bayes.py
+│
+├── problem
+│ ├── init.py
+│ ├── gtsrb.py
+│ ├── hu_image_data.py
+│ └── data
+│ └── GTSRB
+│ └── gtsrb.zip
+│
+├── setup
+│ ├── requirements.txt
+│ ├── setup.bat
+│ └── setup.sh
+│
+├── .gitattributes
+├── .gitignore
+└── README.md
+
+
+Poniżej znajduje się krótki opis głównych katalogów i plików:
+
+- **control**: Zawiera główne skrypty kontrolne projektu.
+  - `__init__.py`: Plik inicjalizacyjny dla modułu control.
+  - `logger_utils.py`: Funkcje pomocnicze do logowania.
+  - `main.py`: Główny skrypt do uruchamiania klasyfikatora.
+
+- **debug**: Zawiera skrypty do debugowania.
+  - `debug_visualize_samples.py`: Skrypt do wizualizacji próbek w celach debugowania.
+
+- **method**: Zawiera implementację metod bayesowskich.
+  - `__init__.py`: Plik inicjalizacyjny dla modułu method.
+  - `gaussian_bayes.py`: Implementacja klasyfikacji bayesowskiej z użyciem rozkładu Gaussa.
+  - `histogram_bayes.py`: Implementacja klasyfikacji bayesowskiej z użyciem histogramów.
+
+- **problem**: Zawiera pliki i dane specyficzne dla problemu.
+  - `__init__.py`: Plik inicjalizacyjny dla modułu problem.
+  - `gtsrb.py`: Metody do obsługi danych GTSRB.
+  - `hu_image_data.py`: Metody do obsługi danych obrazowych z momentami Hu.
+  - **data/GTSRB**: Katalog zawierający zestaw danych GTSRB.
+    - `gtsrb.zip`: Skompresowany plik z zestawem danych GTSRB.
+
+- **setup**: Zawiera skrypty instalacyjne i plik z wymaganiami.
+  - `requirements.txt`: Lista zależności wymaganych do projektu.
+  - `setup.bat`: Skrypt wsadowy do instalacji projektu w systemie Windows.
+  - `setup.sh`: Skrypt powłoki do instalacji projektu w systemach Unix.
+
+
 
     Do raportu:
     Wsparcie (Support):
