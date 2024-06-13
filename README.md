@@ -65,13 +65,11 @@ Poniżej znajduje się krótki opis głównych katalogów i plików:
 
 
 ## Wymagane moduły
-Plik requirements.txt zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
+Plik `requirements.txt` zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
 
-Wymagane moduły można zainstalować za pomocą polecenia pip install -r requirements.txt, co zapewni, że wszystkie niezbędne pakiety zostaną zainstalowane w odpowiednich wersjach, aby projekt działał prawidłowo.
+Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrypty `setup.bat` or `setup.sh`.
 
-Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrpty setup.bat or setup.sh.
-
-Krok 1: Instalacja Wymaganych modułów
+### Krok 1: Instalacja Wymaganych modułów
 
 Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
 
@@ -87,7 +85,7 @@ Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip
 ```
 pip install -r setup/requirements.txt
 ```
-Krok 2: Uruchomienie Projektu
+### Krok 2: Uruchomienie Projektu
 
 Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
 ```
@@ -95,13 +93,17 @@ python control/main.py
 ```
 ## Szczegółowy Opis Kroków
 
-Rozpakowywanie danych: problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
+<!-- ### Rozpakowywanie danych: 
+problem/gtsrb.py rozpakowuje zestaw danych GTSRB do katalogu problem/data/GTSRB/.
 
-Przetwarzanie danych: problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
+### Przetwarzanie danych: 
+problem/hu_image_data.py przetwarza obrazy, oblicza Hu momenty i dzieli dane na zestawy treningowe i testowe.
 
-Wizualizacja danych: debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
+### Wizualizacja danych: 
+debug/debug_visualize_samples.py wizualizuje przykładowe obrazy oraz ich Hu momenty.
 
-Trenowanie modeli: method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny oraz nieparametryczny klasyfikator Bayesa i generują raporty z wyników klasyfikacji.
+### Trenowanie modeli: 
+method/gaussian_bayes.py oraz method/histogram_bayes.py trenują odpowiednio parametryczny oraz nieparametryczny klasyfikator Bayesa i generują raporty z wyników klasyfikacji. -->
 
 ## Argumenty Skryptu main.py
 
@@ -112,14 +114,14 @@ Oto przykład uruchomienia z argumentami:
 
 Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
-    <!-- Do raportu:
-    Wsparcie (Support):
+<!-- Do raportu:
+Wsparcie (Support):
 
-    Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
-    Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
-    Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
+Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
+Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
+Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
 
-    Średnie wartości dla wszystkich klas:
+Średnie wartości dla wszystkich klas:
 
-    Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
-    Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->
+Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
+Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->
