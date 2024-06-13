@@ -88,7 +88,7 @@ if __name__ == '__main__':
     parser.add_argument('--zip_path', type=str, default='problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode to visualize sample data.')
     parser.add_argument('--test_size', type=float, default=0.2, help='Fraction of data to be used for testing (between 0.01 and 0.99).')
-    parser.add_argument('--no_classes', type=int, default=8, help='Number of classes.')
+    parser.add_argument('--no_classes', type=int, default=5, help='Number of classes.')
     parser.add_argument('--no_features', type=int, default=7, help='Number of features (Hu moments) to use (between 1 and 7).')
     parser.add_argument('--bin_count', type=int, default=10, help='Number of bins for histogram model.')
     parser.add_argument('--clean', action='store_true', help='Optionally clean unnecessary directories before starting.')
