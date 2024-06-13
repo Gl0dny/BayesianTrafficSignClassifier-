@@ -58,37 +58,37 @@ Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikac
 
 ## Struktura Projektu
 
-BAYESIANTRAFFICSIGNCLASSIFIER
-│
-├── control
-│   ├── __init__.py
-│   ├── logger_utils.py
-│   └── main.py
-│
-├── debug
-│   └── debug_visualize_samples.py
-│
-├── method
-│   ├── __init__.py
-│   ├── gaussian_bayes.py
-│   └── histogram_bayes.py
-│
-├── problem
-│   ├── __init__.py
-│   ├── gtsrb.py
-│   ├── hu_image_data.py
-│   └── data
-│       └── GTSRB
-│           └── gtsrb.zip
-│
-├── setup
-│   ├── requirements.txt
-│   ├── setup.bat
-│   └── setup.sh
-│
-├── .gitattributes
-├── .gitignore
-└── README.md
+    BAYESIANTRAFFICSIGNCLASSIFIER
+    │
+    ├── control
+    │   ├── __init__.py
+    │   ├── logger_utils.py
+    │   └── main.py
+    │
+    ├── debug
+    │   └── debug_visualize_samples.py
+    │
+    ├── method
+    │   ├── __init__.py
+    │   ├── gaussian_bayes.py
+    │   └── histogram_bayes.py
+    │
+    ├── problem
+    │   ├── __init__.py
+    │   ├── gtsrb.py
+    │   ├── hu_image_data.py
+    │   └── data
+    │       └── GTSRB
+    │           └── gtsrb.zip
+    │
+    ├── setup
+    │   ├── requirements.txt
+    │   ├── setup.bat
+    │   └── setup.sh
+    │
+    ├── .gitattributes
+    ├── .gitignore
+    └── README.md
 
     .
     ├── build                   # Compiled files (alternatively `dist`)
