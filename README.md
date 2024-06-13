@@ -11,65 +11,9 @@ Wymagane moduły można zainstalować za pomocą polecenia pip install -r requir
 
 Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrpty setup.bat or setup.sh.
 
-Dokumentacja Modułów
-control
-__init__.py
+Krok 1: Instalacja Wymaganych modułów
 
-Plik inicjalizujący moduł control. Jest to zazwyczaj pusty plik używany do oznaczenia katalogu jako modułu Pythona.
-logger_utils.py
-
-Zawiera funkcje i klasy wspomagające logowanie w aplikacji. Może zawierać ustawienia formatowania logów, poziomy logowania oraz mechanizmy zapisu logów do plików lub wyświetlania na konsoli.
-main.py
-
-Główny skrypt do uruchomienia projektu. Może zawierać logikę inicjalizacji, ładowania danych, trenowania modelu i ewaluacji wyników.
-debug
-debug_visualize_samples.py
-
-Skrypt do wizualizacji próbek danych dla celów debugowania. Pomaga w zrozumieniu, jak wyglądają dane wejściowe oraz weryfikacji poprawności przetwarzania danych.
-method
-__init__.py
-
-Plik inicjalizujący moduł method. Jest to zazwyczaj pusty plik używany do oznaczenia katalogu jako modułu Pythona.
-gaussian_bayes.py
-
-Zawiera implementację klasyfikatora Gaussian Naive Bayes. Klasyfikator ten wykorzystuje założenie, że cechy mają rozkład normalny, aby obliczyć prawdopodobieństwa przynależności do klas.
-histogram_bayes.py
-
-Zawiera implementację klasyfikatora Histogram Bayes. Może to być klasyfikator oparty na histogramach cech, który wykorzystuje dystrybucje cech do obliczenia prawdopodobieństw przynależności do klas.
-problem
-data/GTSRB
-
-Katalog zawierający dane GTSRB (German Traffic Sign Recognition Benchmark). Dane te są używane do trenowania i testowania modeli klasyfikacyjnych.
-
-    gtsrb.zip: Skompresowany plik z danymi GTSRB.
-    __init__.py: Plik inicjalizujący katalog GTSRB jako moduł Pythona.
-    gtsrb.py: Skrypt zawierający funkcje do ładowania i przetwarzania danych GTSRB.
-    hu_image_data.py: Skrypt do ekstrakcji momentów Hu z obrazów znaków drogowych oraz podziału danych na zestawy treningowe i testowe.
-
-__init__.py
-
-Plik inicjalizujący moduł problem. Jest to zazwyczaj pusty plik używany do oznaczenia katalogu jako modułu Pythona.
-setup
-requirements.txt
-
-Plik zawierający listę zależności Pythona wymaganych do uruchomienia projektu. Może zawierać nazwy pakietów i ich wersje.
-setup.bat
-
-Skrypt wsadowy dla systemu Windows do instalacji zależności i konfiguracji środowiska.
-setup.sh
-
-Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
-Pliki konfiguracyjne
-.gitattributes
-
-Plik konfiguracyjny Gita określający atrybuty plików. Może zawierać informacje o tym, jak Git powinien traktować określone pliki (np. normalizacja końców linii).
-.gitignore
-
-Plik konfiguracyjny Gita określający pliki i katalogi, które powinny być ignorowane przez system kontroli wersji Git. Może zawierać tymczasowe pliki, katalogi build, dane wyjściowe itp.
-Instrukcje do Uruchomienia
-Krok 1: Instalacja Wymaganych Bibliotek
-
-Aby zainstalować wymagane biblioteki, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
+Aby zainstalować wymagane moduły, użyj jednego z poniższych skryptów w zależności od systemu operacyjnego.
 
 Dla Windows:
 
@@ -151,28 +95,28 @@ Poniżej znajduje się krótki opis głównych katalogów i plików:
 
 - **control**: Zawiera główne skrypty kontrolne projektu.
   - `__init__.py`: Plik inicjalizacyjny dla modułu control.
-  - `logger_utils.py`: Funkcje pomocnicze do logowania.
-  - `main.py`: Główny skrypt do uruchamiania klasyfikatora.
+  - `logger_utils.py`: Funkcje pomocnicze do logowania, ustawienia formatowania logów, poziomy logowania oraz mechanizmy zapisu logów do plików lub wyświetlania na konsoli.
+  - `main.py`: Główny skrypt do uruchamiania klasyfikatora. Zawiera logikę inicjalizacji, ładowania danych, trenowania modelu i ewaluacji wyników.
 
 - **debug**: Zawiera skrypty do debugowania.
-  - `debug_visualize_samples.py`: Skrypt do wizualizacji próbek w celach debugowania.
+  - `debug_visualize_samples.py`: Skrypt do wizualizacji próbek danych dla celów debugowania. Pomaga w zrozumieniu, jak wyglądają dane wejściowe oraz weryfikacji poprawności przetwarzania danych.
 
 - **method**: Zawiera implementację metod bayesowskich.
   - `__init__.py`: Plik inicjalizacyjny dla modułu method.
-  - `gaussian_bayes.py`: Implementacja klasyfikacji bayesowskiej z użyciem rozkładu Gaussa.
-  - `histogram_bayes.py`: Implementacja klasyfikacji bayesowskiej z użyciem histogramów.
+  - `gaussian_bayes.py`: Zawiera implementację parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego). Klasyfikator ten wykorzystuje założenie, że cechy mają rozkład normalny, aby obliczyć prawdopodobieństwa przynależności do klas.
+  - `histogram_bayes.py`: Zawiera implementację klasyfikatora nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy). Klasyfikator oparty na histogramach cech, który wykorzystuje dystrybucje cech do obliczenia prawdopodobieństw przynależności do klas.
 
 - **problem**: Zawiera pliki i dane specyficzne dla problemu.
   - `__init__.py`: Plik inicjalizacyjny dla modułu problem.
   - `gtsrb.py`: Metody do obsługi danych GTSRB.
-  - `hu_image_data.py`: Metody do obsługi danych obrazowych z momentami Hu.
-  - **data/GTSRB**: Katalog zawierający zestaw danych GTSRB.
+  - `hu_image_data.py`: Metody do obsługi danych obrazowych z momentami Hu, ekstrakcji momentów Hu z obrazów znaków drogowych oraz podziału danych na zestawy treningowe i testowe.
+  - **data/GTSRB**: Katalog zawierający dane GTSRB (German Traffic Sign Recognition Benchmark). Dane te są używane do trenowania i testowania modeli klasyfikacyjnych.
     - `gtsrb.zip`: Skompresowany plik z zestawem danych GTSRB.
 
 - **setup**: Zawiera skrypty instalacyjne i plik z wymaganiami.
   - `requirements.txt`: Lista zależności wymaganych do projektu.
-  - `setup.bat`: Skrypt wsadowy do instalacji projektu w systemie Windows.
-  - `setup.sh`: Skrypt powłoki do instalacji projektu w systemach Unix.
+  - `setup.bat`: Skrypt wsadowy dla systemu Windows do instalacji zależności i konfiguracji środowiska.
+  - `setup.sh`: Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
 
 
 
