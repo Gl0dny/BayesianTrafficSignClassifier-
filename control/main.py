@@ -74,11 +74,11 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
         h_classifier.print_histograms_for_class(1)
 
     # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
-    y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_probs.txt'))
+    y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_predictions.txt'))
     g_classifier.print_classification_report(y_pred)
     
     # Krok 6: Klasyfikacja - Uruchomienie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy) na zbiorze testowym
-    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_probs.txt'))
+    y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_predictions.txt'))
     h_classifier.print_classification_report(y_pred)
 
 if __name__ == '__main__':
@@ -146,3 +146,4 @@ if __name__ == '__main__':
 #         --no_classes: Liczba klas.
 #         --no_features: Liczba cech (momentów Hu) do użycia (między 1 a 7).
 #         --bin_count: Liczba koszyków dla modelu histogramowego.
+#         --clean: Włącza tryb czyszczenia plików generowanych podczas przetwarzania danych.    
