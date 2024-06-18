@@ -1,6 +1,6 @@
 # Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
 
-Ten projekt ma na celu klasyfikację znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
+Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
 
 ## Struktura Projektu
 
@@ -103,10 +103,6 @@ python control/main.py
 
 ### control/main.py
 
-```
-python control/main.py
-```
-
 Główny plik uruchamiający proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
 
 #### Parametry:
@@ -117,6 +113,7 @@ Główny plik uruchamiający proces przetwarzania danych i trenowania modeli kla
 - `no_classes` (int): Liczba klas znaków drogowych. ( default: 5 - ze względu na ograniczenie rozmiaru projektu do 20 MB )
 - `no_features` (int): Liczba cech do użycia z momentów Hu. ( default: 7 - liczba momentów Hu )
 - `test_size` (float): Ułamek danych przeznaczonych na zestaw testowy. ( default: 0.2 )
+- `bin_count` (int): Liczba koszyków dla modelu histogramowego. ( default: 10 )
 - `clean` (bool): Flaga włączająca tryb czyszczenia.
 
 #### Argumenty:
@@ -614,15 +611,3 @@ Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cec
 - `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
 - `_calculate_class_probabilities`: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
 - `print_histograms_for_class`: Drukuje histogramy dla wszystkich cech dla określonej klasy.
-
-<!-- Do raportu:
-Wsparcie (Support):
-
-Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
-Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
-Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
-
-Średnie wartości dla wszystkich klas:
-
-Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
-Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->

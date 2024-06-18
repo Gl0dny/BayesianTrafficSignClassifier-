@@ -116,34 +116,3 @@ if __name__ == '__main__':
     logger.log("Process started.")
     main(args.bin_count, args.data_dir, args.zip_path, args.debug, args.no_classes, args.no_features, args.test_size)
     logger.log("Process completed.")
-
-# Dokumentacja:
-
-# Funkcja clean_pipeline_data:
-
-#     Opis: Funkcja czyszcząca zbędne katalogi.
-
-# Funkcja main:
-
-#     Opis: Główna funkcja uruchamiająca proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
-#     Parametry:
-#         bin_count (int): Liczba koszyków dla modelu histogramowego.
-#         data_dir (str): Ścieżka do katalogu z danymi.
-#         zip_path (str): Ścieżka do pliku zip z danymi GTSRB.
-#         debug (bool): Flaga włączająca tryb debugowania.
-#         no_classes (int): Liczba klas znaków drogowych.
-#         no_features (int): Liczba cech do użycia z momentów Hu.
-#         test_size (float): Ułamek danych przeznaczonych na zestaw testowy.
-
-# Sekcja if __name__ == '__main__':
-
-#     Opis: Parser argumentów i walidacja wejściowych parametrów. Uruchamia główną funkcję przetwarzania danych i trenowania modeli.
-#     Argumenty:
-#         --data_dir: Katalog zawierający dane.
-#         --zip_path: Ścieżka do pliku zip z danymi GTSRB.
-#         --debug: Włącza tryb debugowania do wizualizacji danych.
-#         --test_size: Ułamek danych do zestawu testowego (między 0.01 a 0.99).
-#         --no_classes: Liczba klas.
-#         --no_features: Liczba cech (momentów Hu) do użycia (między 1 a 7).
-#         --bin_count: Liczba koszyków dla modelu histogramowego.
-#         --clean: Włącza tryb czyszczenia plików generowanych podczas przetwarzania danych.    
