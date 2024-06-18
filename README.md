@@ -80,7 +80,7 @@ Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modu
 5. Pakiety z `requirements.txt` zostaną zainstalowane.
 6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
 
-### Unix
+### Unix/Linux
 
 1. Uruchom `setup/setup.sh`.
 2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe przy użyciu `python3 -m venv`.
@@ -100,15 +100,6 @@ Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
 ```
 python control/main.py
 ```
-
-## Argumenty Skryptu main.py
-
-Skrypt main.py może przyjmować różne argumenty konfiguracyjne. 
-
-
-
-
-Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
 
 ### control/main.py
 
@@ -461,6 +452,78 @@ Feature 1: histogram: [ 40  86 111 140  75  38  21   5   5   3], bin_edges: [ 5.
 - **Pliki `hu_moments.log` są generowane podczas obliczania momentów Hu.**
 - **Pliki `histograms.log` są generowane podczas tworzenia histogramów dla cech i klas.**
 
+
+## Diagram klas
+
+    Main: Główna klasa odpowiedzialna za inicjalizację projektu, wczytywanie danych, trenowanie modeli i ewaluację wyników.
+    LoggerUtils: Klasa zawierająca metody do logowania oraz uruchamiania skryptów pomocniczych.
+    GaussianBayesClassifier: Klasa implementująca parametryczny klasyfikator Bayesa przy założeniu rozkładu normalnego.
+    HistogramBayesClassifier: Klasa implementująca nieparametryczny klasyfikator Bayesa oparty na histogramach.
+    GTSRB: Klasa odpowiedzialna za zarządzanie danymi GTSRB, w tym ich rozpakowywanie.
+    HuImageData: Klasa odpowiedzialna za przetwarzanie danych obrazowych, w tym obliczanie momentów Hu i podział danych na zbiory treningowy i testowy.
+
+```mermaid
+classDiagram
+    class Main {
+        -data_dir : str
+        -zip_path : str
+        -bin_count : int
+        -no_classes : int
+        -no_features : int
+        -test_size : float
+        -debug : bool
+        +main()
+    }
+
+    class LoggerUtils {
+        +log(message: str)
+        +run_script(script: str, args: list)
+    }
+
+    class GaussianBayesClassifier {
+        -X_train : array
+        -y_train : array
+        -X_test : array
+        -y_test : array
+        +fit()
+        +predict() : array
+        +print_classification_report(y_pred: array)
+    }
+
+    class HistogramBayesClassifier {
+        -bins : int
+        -X_train : array
+        -y_train : array
+        -X_test : array
+        -y_test : array
+        +fit()
+        +predict() : array
+        +print_classification_report(y_pred: array)
+        +log_histograms(log_file: str)
+        +print_histograms_for_class(class_index: int)
+    }
+
+    class GTSRB {
+        -data_dir : str
+        -zip_path : str
+        +extract()
+    }
+
+    class HuImageData {
+        -data_dir : str
+        -no_classes : int
+        -no_features : int
+        -test_size : float
+        +split_train_test_data() : tuple
+        +log_hu_moments(hu_data: array, labels: array, log_file: str)
+    }
+
+    Main --> LoggerUtils : uses
+    Main --> GaussianBayesClassifier : uses
+    Main --> HistogramBayesClassifier : uses
+    Main --> GTSRB : uses
+    Main --> HuImageData : uses
+```
 
 ## Opis Głównych Plików
 
