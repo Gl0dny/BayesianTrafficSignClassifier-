@@ -1,6 +1,6 @@
 # Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
 
-Ten projekt ma na celu klasyfikację znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
+Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
 
 ## Struktura Projektu
 
@@ -80,7 +80,7 @@ Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modu
 5. Pakiety z `requirements.txt` zostaną zainstalowane.
 6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
 
-### Unix
+### Unix/Linux
 
 1. Uruchom `setup/setup.sh`.
 2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe przy użyciu `python3 -m venv`.
@@ -101,20 +101,7 @@ Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
 python control/main.py
 ```
 
-## Argumenty Skryptu main.py
-
-Skrypt main.py może przyjmować różne argumenty konfiguracyjne. 
-
-
-
-
-Dzięki tym instrukcjom, powinieneś być w stanie uruchomić projekt klasyfikacji znaków drogowych przy użyciu klasyfikatora Bayesa oraz zrozumieć strukturę i funkcjonowanie poszczególnych modułów.
-
 ### control/main.py
-
-```
-python control/main.py
-```
 
 Główny plik uruchamiający proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
 
@@ -126,6 +113,7 @@ Główny plik uruchamiający proces przetwarzania danych i trenowania modeli kla
 - `no_classes` (int): Liczba klas znaków drogowych. ( default: 5 - ze względu na ograniczenie rozmiaru projektu do 20 MB )
 - `no_features` (int): Liczba cech do użycia z momentów Hu. ( default: 7 - liczba momentów Hu )
 - `test_size` (float): Ułamek danych przeznaczonych na zestaw testowy. ( default: 0.2 )
+- `bin_count` (int): Liczba koszyków dla modelu histogramowego. ( default: 10 )
 - `clean` (bool): Flaga włączająca tryb czyszczenia.
 
 #### Argumenty:
@@ -462,6 +450,78 @@ Feature 1: histogram: [ 40  86 111 140  75  38  21   5   5   3], bin_edges: [ 5.
 - **Pliki `histograms.log` są generowane podczas tworzenia histogramów dla cech i klas.**
 
 
+## Diagram klas
+
+    Main: Główna klasa odpowiedzialna za inicjalizację projektu, wczytywanie danych, trenowanie modeli i ewaluację wyników.
+    LoggerUtils: Klasa zawierająca metody do logowania oraz uruchamiania skryptów pomocniczych.
+    GaussianBayesClassifier: Klasa implementująca parametryczny klasyfikator Bayesa przy założeniu rozkładu normalnego.
+    HistogramBayesClassifier: Klasa implementująca nieparametryczny klasyfikator Bayesa oparty na histogramach.
+    GTSRB: Klasa odpowiedzialna za zarządzanie danymi GTSRB, w tym ich rozpakowywanie.
+    HuImageData: Klasa odpowiedzialna za przetwarzanie danych obrazowych, w tym obliczanie momentów Hu i podział danych na zbiory treningowy i testowy.
+
+```mermaid
+classDiagram
+    class Main {
+        -data_dir : str
+        -zip_path : str
+        -bin_count : int
+        -no_classes : int
+        -no_features : int
+        -test_size : float
+        -debug : bool
+        +main()
+    }
+
+    class LoggerUtils {
+        +log(message: str)
+        +run_script(script: str, args: list)
+    }
+
+    class GaussianBayesClassifier {
+        -X_train : array
+        -y_train : array
+        -X_test : array
+        -y_test : array
+        +fit()
+        +predict() : array
+        +print_classification_report(y_pred: array)
+    }
+
+    class HistogramBayesClassifier {
+        -bins : int
+        -X_train : array
+        -y_train : array
+        -X_test : array
+        -y_test : array
+        +fit()
+        +predict() : array
+        +print_classification_report(y_pred: array)
+        +log_histograms(log_file: str)
+        +print_histograms_for_class(class_index: int)
+    }
+
+    class GTSRB {
+        -data_dir : str
+        -zip_path : str
+        +extract()
+    }
+
+    class HuImageData {
+        -data_dir : str
+        -no_classes : int
+        -no_features : int
+        -test_size : float
+        +split_train_test_data() : tuple
+        +log_hu_moments(hu_data: array, labels: array, log_file: str)
+    }
+
+    Main --> LoggerUtils : uses
+    Main --> GaussianBayesClassifier : uses
+    Main --> HistogramBayesClassifier : uses
+    Main --> GTSRB : uses
+    Main --> HuImageData : uses
+```
+
 ## Opis Głównych Plików
 
 ### control/logger_utils.py
@@ -551,15 +611,3 @@ Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cec
 - `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
 - `_calculate_class_probabilities`: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
 - `print_histograms_for_class`: Drukuje histogramy dla wszystkich cech dla określonej klasy.
-
-<!-- Do raportu:
-Wsparcie (Support):
-
-Wsparcie dla danej klasy to liczba wystąpień danej klasy w zbiorze danych testowych.
-Wsparcie informuje o tym, jak dobrze zbalansowany jest zbiór danych testowych względem różnych klas.
-Dla idealnie zrównoważonych zbiorów danych, wsparcie dla każdej klasy byłoby równe.
-
-Średnie wartości dla wszystkich klas:
-
-Raport klasyfikacji zwykle zawiera również średnie wartości precyzji, czułości, F1-score i wsparcia dla wszystkich klas.
-Te średnie wartości są obliczane na podstawie miar dla poszczególnych klas i mogą być przydatne do oceny ogólnej jakości klasyfikatora -->

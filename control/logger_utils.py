@@ -86,36 +86,3 @@ class Logger:
             self.log(f"{script_name} completed successfully.")
         else:
             self.log(f"{script_name} failed with error: {stderr}")
-
-
-# Dokumentacja:
-
-# Klasa Tee:
-
-#     Opis: Klasa Tee przechwytuje wyjście i przekierowuje je zarówno do pliku, jak i do terminala.
-#     Metody:
-#         __init__(self, name, mode): Inicjalizuje klasę Tee, tworząc folder (jeśli nie istnieje) i otwierając plik w określonym trybie.
-#         write(self, data): Zapisuje dane zarówno do pliku, jak i do terminala.
-#         flush(self): Spłukuje buforowane dane do pliku i terminala.
-
-# Klasa Logger:
-
-#     Opis: Klasa Logger zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
-#     Metody:
-#         __init__(self, log_file): Inicjalizuje klasę Logger, tworząc folder (jeśli nie istnieje) i ustawiając przekierowanie wyjścia do pliku i terminala.
-#         log(self, message): Zapisuje wiadomość do pliku dziennika z datą i czasem.
-#         run_script(self, script_name, args=None, python_executable=sys.executable): Uruchamia skrypt i przekierowuje jego wyjście do pliku dziennika.
-
-# Funkcja log:
-
-#     Opis: Zapisuje wiadomość do pliku dziennika z datą i czasem.
-#     Parametry:
-#         message (str): Wiadomość do zapisania w pliku dziennika.
-
-# Funkcja run_script:
-
-#     Opis: Uruchamia skrypt i przekierowuje jego wyjście do pliku dziennika.
-#     Parametry:
-#         script_name (str): Nazwa skryptu do uruchomienia.
-#         args (list): Lista argumentów do przekazania do skryptu.
-#         python_executable (str): Ścieżka do interpretera Pythona.
