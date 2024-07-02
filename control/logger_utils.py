@@ -6,24 +6,24 @@ import subprocess
 class Tee:
     def __init__(self, name, mode):
         """
-        Klasa Tee przechwytuje wyjście i przekierowuje je zarówno do pliku, jak i do terminala.
+        The Tee class captures output and redirects it both to a file and the terminal.
 
         Parameters:
-        - name (str): Nazwa pliku, do którego będzie zapisywane wyjście.
-        - mode (str): Tryb otwarcia pliku (np. 'a' dla dopisania do pliku).
+        - name (str): The name of the file where the output will be saved.
+        - mode (str): The mode for opening the file (e.g., 'a' for appending to the file).
         """
         log_dir = os.path.dirname(name)
-        os.makedirs(log_dir, exist_ok=True)  # Tworzy folder, jeśli nie istnieje
+        os.makedirs(log_dir, exist_ok=True)
         self.name = name
         self.mode = mode
         self.stdout = sys.stdout
 
     def write(self, data):
         """
-        Zapisuje dane zarówno do pliku, jak i do terminala.
+        Writes data both to the file and the terminal.
 
         Parameters:
-        - data (str): Dane do zapisania.
+        - data (str): The data to write.
         """
         with open(self.name, self.mode, encoding='utf-8') as f:
             f.write(data)
@@ -31,46 +31,46 @@ class Tee:
 
     def flush(self):
         """
-        Spłukuje buforowane dane do pliku i terminala.
+        Flushes buffered data to the file and terminal.
         """
         self.stdout.flush()
 
 class Logger:
     def __init__(self, log_file):
         """
-        Klasa Logger zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
+        The Logger class manages logging messages to a file and displaying them in the terminal.
 
         Parameters:
-        - log_file (str): Ścieżka do pliku dziennika.
+        - log_file (str): The path to the log file.
         """
         self.log_file = log_file
-        os.makedirs(os.path.dirname(log_file), exist_ok=True)  # Tworzy folder, jeśli nie istnieje
+        os.makedirs(os.path.dirname(log_file), exist_ok=True)
         try:
             if os.path.exists(log_file):
                 os.remove(log_file)
         except PermissionError as e:
             print(f"PermissionError: {e}. Make sure the file is not being used by another process.")
-        sys.stdout = Tee(log_file, 'a')  # Przekierowanie wyjścia do pliku i terminala
+        sys.stdout = Tee(log_file, 'a')
 
     def log(self, message):
         """
-        Zapisuje wiadomość do pliku dziennika z datą i czasem.
+        Writes a message to the log file with date and time.
 
         Parameters:
-        - message (str): Wiadomość do zapisania w pliku dziennika.
+        - message (str): The message to write to the log file.
         """
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         full_message = f'{timestamp} - {message}\n'
-        sys.stdout.write(full_message)  # Wyświetla w terminalu
+        sys.stdout.write(full_message)
 
     def run_script(self, script_name, args=None, python_executable=sys.executable):
         """
-        Uruchamia skrypt i przekierowuje jego wyjście do pliku dziennika.
+        Runs a script and redirects its output to the log file.
 
         Parameters:
-        - script_name (str): Nazwa skryptu do uruchomienia.
-        - args (list): Lista argumentów do przekazania do skryptu.
-        - python_executable (str): Ścieżka do interpretera Pythona.
+        - script_name (str): The name of the script to run.
+        - args (list): A list of arguments to pass to the script.
+        - python_executable (str): The path to the Python interpreter.
         """
         command = [python_executable, script_name] + (args if args else [])
         process = subprocess.Popen(
