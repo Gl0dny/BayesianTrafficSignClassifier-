@@ -1,8 +1,22 @@
-# Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
+# Traffic Sign Classification Project Using Bayes Classifier
 
-Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
+The purpose of this program is to process data from the German Traffic Sign Recognition Benchmark (GTSRB) and train two classification models: Gaussian Bayes and Histogram Bayes. The models are evaluated and their performance is logged.
 
-## Struktura Projektu
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Installation and Environment Setup](#installation-and-environment-setup)
+  - [Simulator](#simulator)
+  - [Micromouse](#micromouse)
+  - [Maze](#maze)
+  - [Logger](#logger)
+  - [Sensor](#sensor)
+  - [CommandQueue](#commandqueue)
+  - [Main Function](#main-function)
+- [Usage](#usage)
+- [Dependencies](#dependencies)
+- [Compilation and Execution](#compilation-and-execution)
+
+## Project Structure
 
     BayesianTrafficSignClassifier
     │
@@ -36,106 +50,114 @@ Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych 
     ├── .gitignore
     └── README.md
 
-Poniżej znajduje się krótki opis głównych katalogów i plików:
+Below is a brief description of the main directories and files:
 
-- **control**: Zawiera główne skrypty kontrolne projektu.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu control.
-  - `logger_utils.py`: Funkcje pomocnicze do logowania, ustawienia formatowania logów, poziomy logowania oraz mechanizmy zapisu logów do plików lub wyświetlania na konsoli.
-  - `main.py`: Główny skrypt do uruchamiania klasyfikatora. Zawiera logikę inicjalizacji, ładowania danych, trenowania modelu i ewaluacji wyników.
+- **control**: Contains the main control scripts of the project.
+  - `__init__.py`: Initialization file for the control module.
+  - `logger_utils.py`: Helper functions for logging, setting log formatting, log levels, and mechanisms for saving logs to files or displaying them on the console.
+  - `main.py`: Main script for running the classifier. Includes logic for initialization, data loading, model training, and evaluation of results.
 
-- **debug**: Zawiera skrypty do debugowania.
-  - `debug_visualize_samples.py`: Skrypt do wizualizacji próbek danych dla celów debugowania. Pomaga w zrozumieniu, jak wyglądają dane wejściowe oraz weryfikacji poprawności przetwarzania danych.
+- **debug**: Contains scripts for debugging.
+  - `debug_visualize_samples.py`: Script for visualizing data samples for debugging purposes. Helps understand the input data and verify the correctness of data processing.
 
-- **method**: Zawiera implementację metod bayesowskich.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu method.
-  - `gaussian_bayes.py`: Zawiera implementację parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego). Klasyfikator ten wykorzystuje założenie, że cechy mają rozkład normalny, aby obliczyć prawdopodobieństwa przynależności do klas.
-  - `histogram_bayes.py`: Zawiera implementację klasyfikatora nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy). Klasyfikator oparty na histogramach cech, który wykorzystuje dystrybucje cech do obliczenia prawdopodobieństw przynależności do klas.
+- **method**: Contains the implementation of Bayes methods.
+  - `__init__.py`: Initialization file for the method module.
+  - `gaussian_bayes.py`: Contains the implementation of the parametric ML Bayes classifier (assuming normal distribution). This classifier uses the assumption that features follow a normal distribution to calculate class probabilities.
+  - `histogram_bayes.py`: Contains the implementation of the non-parametric Bayes classifier (multidimensional histogram). This classifier is based on histograms of features, using feature distributions to calculate class probabilities.
 
-- **problem**: Zawiera pliki i dane specyficzne dla problemu.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu problem.
-  - `gtsrb.py`: Metody do obsługi danych GTSRB.
-  - `hu_image_data.py`: Metody do obsługi danych obrazowych z momentami Hu, ekstrakcji momentów Hu z obrazów znaków drogowych oraz podziału danych na zestawy treningowe i testowe.
-  - **data/GTSRB**: Katalog zawierający dane GTSRB (German Traffic Sign Recognition Benchmark). Dane te są używane do trenowania i testowania modeli klasyfikacyjnych.
-    - `gtsrb.zip`: Skompresowany plik z zestawem danych GTSRB.
+- **problem**: Contains files and data specific to the problem.
+  - `__init__.py`: Initialization file for the problem module.
+  - `gtsrb.py`: Methods for handling GTSRB data.
+  - `hu_image_data.py`: Methods for handling image data with Hu moments, extracting Hu moments from traffic sign images, and splitting the data into training and test sets.
+  - **data/GTSRB**: Directory containing the GTSRB (German Traffic Sign Recognition Benchmark) data. This data is used to train and test the classification models.
+    - `gtsrb.zip`: Compressed file with the GTSRB dataset.
 
-- **setup**: Zawiera skrypty instalacyjne i plik z wymaganiami.
-  - `requirements.txt`: Lista zależności wymaganych do projektu.
-  - `setup.bat`: Skrypt wsadowy dla systemu Windows do instalacji zależności i konfiguracji środowiska.
-  - `setup.sh`: Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
+- **setup**: Contains installation scripts and the requirements file.
+  - `requirements.txt`: List of dependencies required for the project.
+  - `setup.bat`: Batch script for Windows to install dependencies and set up the environment.
+  - `setup.sh`: Shell script for Unix/Linux to install dependencies and set up the environment.
 
 
-## Instalacja i Konfiguracja Środowiska
+## Installation and Environment Setup
 
-### Wymagane moduły
-Plik `requirements.txt` zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
+### Required Modules
+The `requirements.txt` file contains all the required packages and their versions necessary to run the project.
 
-Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrypty `setup.bat` or `setup.sh`.
+To handle the setup of a virtual environment along with the installation of the necessary modules, use the `setup.bat` or `setup.sh` scripts.
 
 ### Windows
 
-1. Uruchom `setup/setup.bat`.
-2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe.
-3. Środowisko wirtualne zostanie aktywowane.
-4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
-5. Pakiety z `requirements.txt` zostaną zainstalowane.
-6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
+1. Run `setup/setup.bat`.
+2. The script will check if a virtual environment exists, and if not, it will create a new one.
+3. The virtual environment will be activated.
+4. A list of installed packages will be displayed before and after the installation of new packages.
+5. Packages from `requirements.txt` will be installed.
+6. Instructions for running the main script and deactivating the virtual environment will be displayed.
 
 ### Unix/Linux
 
-1. Uruchom `setup/setup.sh`.
-2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe przy użyciu `python3 -m venv`.
-3. Środowisko wirtualne zostanie aktywowane poprzez `source venv/bin/activate`.
-4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
-5. Pakiety z `requirements.txt` zostaną zainstalowane.
-6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
+1. Run `setup/setup.sh`.
+2. The script will check if a virtual environment exists, and if not, it will create a new one using:
+    ```
+    python3 -m venv
+    ```
+3. The virtual environment will be activated via:
+    ```
+    source venv/bin/activate.
+    ```
+4. A list of installed packages will be displayed before and after the installation of new packages.
+5. Packages from `requirements.txt` will be installed.
+6. Instructions for running the main script and deactivating the virtual environment will be displayed.
 
-Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
+Alternatively, you can manually install the required libraries using pip:
 ```
 pip install -r setup/requirements.txt
 ```
 
-## Uruchomienie Projektu
+## Running the Project
 
-Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
+Run the main script, which will execute all the project steps:
 ```
 python control/main.py
 ```
 
 ### control/main.py
 
-Główny plik uruchamiający proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
+The main script initiates the data processing and model training process.
 
-#### Parametry:
-- `bin_count` (int): Liczba koszyków dla modelu histogramowego.
-- `data_dir` (str): Ścieżka do katalogu z danymi.
-- `zip_path` (str): Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
-- `debug` (bool): Flaga włączająca tryb debugowania.
-- `no_classes` (int): Liczba klas znaków drogowych. ( default: 5 - ze względu na ograniczenie rozmiaru projektu do 20 MB )
-- `no_features` (int): Liczba cech do użycia z momentów Hu. ( default: 7 - liczba momentów Hu )
-- `test_size` (float): Ułamek danych przeznaczonych na zestaw testowy. ( default: 0.2 )
-- `bin_count` (int): Liczba koszyków dla modelu histogramowego. ( default: 10 )
-- `clean` (bool): Flaga włączająca tryb czyszczenia.
+#### Parameters:
 
-#### Argumenty:
-- `--data_dir`: Katalog zawierający dane.
-- `--zip_path`: Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
-- `--debug`: Włącza tryb debugowania do wizualizacji danych.
-- `--test_size`: Ułamek danych do zestawu testowego (między 0.01 a 0.99).
-- `--no_classes`: Liczba klas. ( zależne od ilości posiadanych danych/klas )
-- `--no_features`: Liczba cech (momentów Hu) do użycia (między 1 a 7).
-- `--bin_count`: Liczba koszyków dla modelu histogramowego.
-- `--clean`: Włącza tryb czyszczenia plików generowanych podczas przetwarzania danych.    
+- `bin_count` (int): Number of bins for the histogram model.
+- `data_dir` (str): Path to the data directory.
+- `zip_path` (str): Path to the zip file containing the data in the format train/class_dir.
+- `debug` (bool): Flag to enable debugging mode.
+- `no_classes` (int): Number of traffic sign classes. (default: 5 - due to the project's size limit of 20 MB)
+- `no_features` (int): Number of features to use from Hu moments. (default: 7 - number of Hu moments)
+- `test_size` (float): Fraction of data reserved for the test set. (default: 0.2)
+- `bin_count` (int): Number of bins for the histogram model. (default: 10)
+- `clean` (bool): Flag to enable cleaning mode.
 
-Oto przykład uruchomienia z argumentami:
+#### Arguments:
+
+- `--data_dir`: Directory containing the data.
+- `--zip_path`: Path to the zip file with compressed data in the format train/class_dir.
+- `--debug`: Enables debugging mode for data visualization.
+- `--test_size`: Fraction of data for the test set (between 0.01 and 0.99).
+- `--no_classes`: Number of classes. (dependent on the amount of available data/classes)
+- `--no_features`: Number of features (Hu moments) to use (between 1 and 7).
+- `--bin_count`: Number of bins for the histogram model.
+- `--clean`: Enables cleaning mode for files generated during data processing.
+
+Here is an example of running with arguments:
 ```
 python control/main.py --clean --debug --test_size 0.2 --no_classes 5 --no_features 7 --bin_count 10
 ```
 
-## Szczegółowy Opis Działania Programu
+## Detailed Program Operation
 
-Program przetwarza dane i trenuje dwa modele klasyfikacyjne, monitorując cały proces poprzez logowanie. Poniżej znajduje się szczegółowy opis każdego kroku.
+The program processes the data and trains two classification models, monitoring the entire process through logging. Below is a detailed description of each step.
 
-### Krok 1: Rozpakowanie Danych
+### Step 1: Extracting Data
 
 ```
 logger.log("Step 1: Extracting GTSRB data started.")
@@ -143,15 +165,16 @@ gtsrb = GTSRB(data_dir, zip_path)
 gtsrb.extract()
 ```
 
-**Opis:** Rozpakowanie danych z pliku zip z zasobami German Traffic Sign Recognition Benchmark (GTSRB).
+**Description:** Extracting data from the zip file containing the German Traffic Sign Recognition Benchmark (GTSRB) resources
 
-**Czynności:**
-- Zainicjowanie obiektu GTSRB z podaniem ścieżki do katalogu z danymi oraz ścieżki do pliku zip.
-- Rozpakowanie pliku zip do określonego katalogu.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia operacji rozpakowywania danych.
+- Initialize the GTSRB object with the data directory path and the zip file path.
+- Extract the zip file to the specified directory.
 
-### Krok 2: Przetwarzanie Danych
+**Logging:** Record the start of the data extraction operation.
+
+### Step 2: Data Processing
 
 ```
 logger.log("Step 2: Preprocessing data started.")
@@ -162,17 +185,18 @@ print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_te
 print("Data preprocessing complete. Hu moments logged to", log_file)
 ```
 
-**Opis:** Przetwarzanie danych, w tym obliczanie momentów Hu, podział na zbiory treningowy i testowy oraz logowanie wyników.
+**Description:** Processing data, including calculating Hu moments, splitting into training and test sets, and logging results.
 
-**Czynności:**
-- Inicjalizacja obiektu HuImageData z danymi z katalogu, liczbą klas, liczbą cech i rozmiarem zbioru testowego.
-- Podział danych na zbiory treningowy i testowy oraz obliczenie momentów Hu.
-- Logowanie momentów Hu dla zbioru treningowego.
-- Wyświetlenie informacji o rozmiarach zbiorów treningowego i testowego.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia przetwarzania danych oraz logowanie momentów Hu do pliku hu_moments_log.txt.
+- Initialize the HuImageData object with data from the directory, number of classes, number of features, and test set size.
+- Split the data into training and test sets and calculate Hu moments.
+- Log the Hu moments for the training set.
+- Display information about the sizes of the training and test sets.
 
-### Krok (opcjonalny): Wizualizacja Przykładowych Danych
+**Logging:** Record the start of data processing and log Hu moments to the `hu_moments_log.txt` file.
+
+### Optional Step: Visualizing Sample Data
 
 ```
 if debug:
@@ -180,15 +204,16 @@ if debug:
     logger.run_script('debug/debug_visualize_samples.py', args=[data_dir])
 ```
 
-**Opis:** Wizualizacja przykładowych danych (opcjonalne, w zależności od trybu debugowania).
+**Description:** Visualize sample data (optional, depending on debugging mode).
 
-**Czynności:**
-- Rejestrowanie rozpoczęcia wizualizacji danych.
-- Uruchomienie skryptu debug/debug_visualize_samples.py, który wizualizuje próbki danych.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia opcjonalnego kroku wizualizacji.
+- Record the start of data visualization.
+- Run the debug/debug_visualize_samples.py script to visualize data samples.
 
-### Krok 3: Uczenie Parametrycznego Klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
+**Logging**: Record the start of the optional visualization step.
+
+### Step 3: Training Gaussian Bayes Classifier (assuming normal distribution)
 
 ```
 logger.log("Step 3: Training Gaussian Bayes model started.")
@@ -196,11 +221,12 @@ g_classifier = GaussianBayesClassifier(X_train=hu_train, y_train=y_train, X_test
 g_classifier.fit()
 ```
 
-**Opis:** Trening klasyfikatora Bayesa z założeniem rozkładu normalnego (Gaussian Bayes).
+**Description:** Train the Gaussian Bayes classifier assuming normal distribution.
 
-**Czynności:**
-- Inicjalizacja obiektu GaussianBayesClassifier z danymi treningowymi i testowymi.
-- Trening modelu na zbiorze treningowym.
+**Actions:**
+
+- Initialize the GaussianBayesClassifier object with training and test data.
+- Train the model on the training set.
 
 **Logowanie:** Rejestrowanie rozpoczęcia treningu klasyfikatora Gaussian Bayes.
 
