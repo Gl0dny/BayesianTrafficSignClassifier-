@@ -3,18 +3,18 @@ from sklearn.metrics import classification_report
 
 class GaussianBayesClassifier:
     """
-    Klasyfikator Bayesa z wykorzystaniem rozkładów Gaussa do modelowania rozkładów cech.
+    Bayes classifier using Gaussian distributions to model feature distributions.
     """
     
     def __init__(self, X_train, y_train, X_test, y_test):
         """
-        Inicjalizuje klasyfikator na podstawie danych treningowych i testowych.
+        Initializes the classifier based on training and test data.
 
         Parameters:
-        - X_train (numpy.ndarray): Tablica z cechami treningowymi.
-        - y_train (numpy.ndarray): Tablica z etykietami klas treningowych.
-        - X_test (numpy.ndarray): Tablica z cechami testowymi.
-        - y_test (numpy.ndarray): Tablica z etykietami klas testowych.
+        - X_train (numpy.ndarray): Array with training features.
+        - y_train (numpy.ndarray): Array with training class labels.
+        - X_test (numpy.ndarray): Array with test features.
+        - y_test (numpy.ndarray): Array with test class labels.
         """
         self.classes = np.unique(y_train)
         self.X_train = X_train
@@ -27,7 +27,7 @@ class GaussianBayesClassifier:
 
     def fit(self):
         """
-        Trenuje klasyfikator na podstawie danych treningowych, obliczając średnie, wariancje i priorytety klas.
+        Trains the classifier based on training data by calculating class means, variances, and priors.
         """
         for c in self.classes:
             X_c = self.X_train[self.y_train == c]
@@ -37,13 +37,13 @@ class GaussianBayesClassifier:
 
     def predict(self, predict_log_file):
         """
-        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+        Predicts classes for test data and logs detailed prediction information to a file.
 
         Parameters:
-        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+        - predict_log_file (str): Path to the file where detailed prediction information will be logged.
 
         Returns:
-        - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+        - numpy.ndarray: Predicted class labels for the test set.
         """
         y_pred = []
         with open(predict_log_file, 'w') as f:
@@ -56,23 +56,23 @@ class GaussianBayesClassifier:
 
     def print_classification_report(self, y_pred):
         """
-        Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+        Prints the classification report based on test data and predictions.
 
         Parameters:
-        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
+        - y_pred (numpy.ndarray): Predicted class labels.
         """
         print("Gaussian Bayes Classification Report:")
         print(classification_report(self.y_test, y_pred))
 
     def _calculate_posterior(self, x):
         """
-        Oblicza prawdopodobieństwo a posteriori dla każdej klasy i wybiera klasę z najwyższym prawdopodobieństwem.
+        Calculates the posterior probability for each class and selects the class with the highest probability.
 
         Parameters:
-        - x (numpy.ndarray): Pojedynczy przykład.
+        - x (numpy.ndarray): Single example.
 
         Returns:
-        - int: Klasa o najwyższym prawdopodobieństwie a posteriori.
+        - int: Class with the highest posterior probability.
         """
         posteriors = []
         for c in self.classes:
@@ -84,14 +84,14 @@ class GaussianBayesClassifier:
 
     def _calculate_likelihood(self, class_idx, x):
         """
-        Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+        Calculates the conditional probability for a given class and example.
 
         Parameters:
-        - class_idx (int): Indeks klasy.
-        - x (numpy.ndarray): Pojedynczy przykład.
+        - class_idx (int): Class index.
+        - x (numpy.ndarray): Single example.
 
         Returns:
-        - numpy.ndarray: Prawdopodobieństwo warunkowe dla każdej cechy.
+        - numpy.ndarray: Conditional probability for each feature.
         """
         mean = self.mean[class_idx]
         var = self.variance[class_idx]

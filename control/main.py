@@ -11,7 +11,7 @@ from method import GaussianBayesClassifier, HistogramBayesClassifier
 
 def clean_pipeline_data():
     """
-    Funkcja czyszcząca zbędne katalogi.
+    Function to clean unnecessary directories.
     """
     directories_to_remove = [
         'debug/logs',
@@ -27,24 +27,22 @@ def clean_pipeline_data():
 
 def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_size):
     """
-    Główna funkcja uruchamiająca proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
+    Main function to start the data processing and model training pipeline.
 
     Parameters:
-    - bin_count (int): Liczba koszyków dla modelu histogramowego.
-    - data_dir (str): Ścieżka do katalogu z danymi.
-    - zip_path (str): Ścieżka do pliku zip z danymi GTSRB.
-    - debug (bool): Flaga włączająca tryb debugowania.
-    - no_classes (int): Liczba klas znaków drogowych.
-    - no_features (int): Liczba cech do użycia z momentów Hu.
-    - test_size (float): Ułamek danych przeznaczonych na zestaw testowy.
+    - bin_count (int): Number of bins for the histogram model.
+    - data_dir (str): Path to the data directory.
+    - zip_path (str): Path to the GTSRB zip file.
+    - debug (bool): Flag to enable debug mode.
+    - no_classes (int): Number of traffic sign classes.
+    - no_features (int): Number of features to use from Hu moments.
+    - test_size (float): Fraction of data to be used for the test set.
     """
     
-    # Krok 1: Rozpakowanie danych
     logger.log("Step 1: Extracting GTSRB data started.")
     gtsrb = GTSRB(data_dir, zip_path)
     gtsrb.extract()
 
-    # Krok 2: Przetwarzanie danych
     logger.log("Step 2: Preprocessing data started.")
     hu_image_data = HuImageData(data_dir, no_classes, no_features, test_size)
     X_train, X_test, hu_train, hu_test, y_train, y_test = hu_image_data.split_train_test_data()
@@ -52,37 +50,30 @@ def main(bin_count, data_dir, zip_path, debug, no_classes, no_features, test_siz
     print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_test.shape[0]}')
     print("Data preprocessing complete. Hu moments logged to", log_file)
 
-    # Krok (opcjonalny): Wizualizacja przykładowych danych
     if debug:
         logger.log("Optional Step: Visualizing sample data started.")
         logger.run_script('debug/debug_visualize_samples.py', args=[data_dir])
 
-    # Krok 3: Uczenie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
     logger.log("Step 3: Training Gaussian Bayes model started.")
     g_classifier = GaussianBayesClassifier(X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
     g_classifier.fit()
 
-    # Krok 4: Uczenie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy)
     logger.log("Step 4: Training Histogram Bayes model started.")
     h_classifier = HistogramBayesClassifier(bins=bin_count, X_train=hu_train, y_train=y_train, X_test=hu_test, y_test=y_test)
     h_classifier.fit()
     h_classifier.log_histograms(log_file=os.path.join(log_dir, 'histograms.log'))
     
-    # Krok (opcjonalny): Wizualizacja histogramów danej klasy
     if debug:
         logger.log("Optional Step: Visualizing sample histogram started.")
         h_classifier.print_histograms_for_class(1)
 
-    # Krok 5: Klasyfikacja - Uruchomienie parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego) na zbiorze testowym
     y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_predictions.log'))
     g_classifier.print_classification_report(y_pred)
     
-    # Krok 6: Klasyfikacja - Uruchomienie nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy) na zbiorze testowym
     y_pred = h_classifier.predict(predict_log_file=os.path.join(log_dir, 'h_classifier_predict_predictions.log'))
     h_classifier.print_classification_report(y_pred)
 
 if __name__ == '__main__':
-    # Parser argumentów
     parser = argparse.ArgumentParser(description="Run the data processing and training pipeline.")
     parser.add_argument('--data_dir', type=str, default='problem/data/GTSRB/Traffic_Signs/', help='Directory containing the data.')
     parser.add_argument('--zip_path', type=str, default='problem/data/GTSRB/gtsrb.zip', help='Path to the GTSRB zip file.')
@@ -90,12 +81,11 @@ if __name__ == '__main__':
     parser.add_argument('--test_size', type=float, default=0.2, help='Fraction of data to be used for testing (between 0.01 and 0.99).')
     parser.add_argument('--no_classes', type=int, default=5, help='Number of classes.')
     parser.add_argument('--no_features', type=int, default=7, help='Number of features (Hu moments) to use (between 1 and 7).')
-    parser.add_argument('--bin_count', type=int, default=10, help='Number of bins for histogram model.')
+    parser.add_argument('--bin_count', type=int, default=10, help='Number of bins for the histogram model.')
     parser.add_argument('--clean', action='store_true', help='Optionally clean unnecessary directories before starting.')
 
     args = parser.parse_args()
 
-    # Walidacja argumentów
     if not (2 < args.no_classes):
         raise ValueError("The number of classes must be at least 2.")
     if not (0.01 <= args.test_size <= 0.99):
@@ -103,12 +93,10 @@ if __name__ == '__main__':
     if not (1 <= args.no_features <= 7):
         raise ValueError("no_features must be between 1 and 7")
     
-    # Czyszczenie plików z poprzedniej konfiguracji pipeline'u
     if args.clean:
         print("Cleaning previously processed files.")
         clean_pipeline_data()
 
-    # Logowanie procesu
     log_dir = 'debug/logs'
     log_file = os.path.join(log_dir, 'main.log')
     logger = Logger(log_file)

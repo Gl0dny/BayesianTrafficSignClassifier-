@@ -1,8 +1,49 @@
-# Projekt Klasyfikacji Znaków Drogowych z Użyciem Klasyfikatora Bayesa
+# Traffic Sign Classification Project Using Bayes Classifier
 
-Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych z wykorzystaniem klasyfikatora Bayesa. Projekt obejmuje przetwarzanie danych, trenowanie modeli klasyfikacyjnych oraz wizualizację wyników.
+The purpose of this program is to process data from the German Traffic Sign Recognition Benchmark (GTSRB) and train two classification models: Gaussian Bayes and Histogram Bayes. The models are evaluated and their performance is logged.
 
-## Struktura Projektu
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Installation and Environment Setup](#installation-and-environment-setup)
+   - [Required Modules](#required-modules)
+   - [Windows](#windows)
+   - [Unix/Linux](#unixlinux)
+3. [Running the Project](#running-the-project)
+   - [control/main.py](#controlmainpy)
+4. [Detailed Program Operation](#detailed-program-operation)
+   - [Step 1: Extracting Data](#step-1-extracting-data)
+   - [Step 2: Data Processing](#step-2-data-processing)
+   - [Optional Step: Visualizing Sample Data](#optional-step-visualizing-sample-data)
+   - [Step 3: Training Gaussian Bayes Classifier](#step-3-training-gaussian-bayes-classifier)
+   - [Step 4: Training Histogram Bayes Classifier](#step-4-training-histogram-bayes-classifier)
+   - [Optional Step: Visualization of Histograms for a Given Class](#optional-step-visualization-of-histograms-for-a-given-class)
+   - [Step 5: Classification - Parametric Bayesian ML Classifier](#step-5-classification-parametric-bayesian-ml-classifier)
+   - [Step 6: Classification - Non-parametric Bayesian Classifier](#step-6-classification-non-parametric-bayesian-classifier)
+5. [Progress monitoring log file](#progress-monitoring-log-file)
+   - [Description](#description)
+   - [Example Content of `main.log`](#example-content-of-mainlog)
+6. [Classification Report - Example](#classification-report-example)
+   - [Model Performance](#model-performance)
+   - [Performance for Individual Classes](#performance-for-individual-classes)
+7. [Log Files](#log-files)
+   - [Generated Log Files](#generated-log-files)
+     - [`g_classifier_predictions.log`](#g_classifier_predictionslog)
+     - [`h_classifier_predictions.log`](#h_classifier_predictionslog)
+     - [`hu_moments.log`](#hu_momentslog)
+     - [`histograms.log`](#histogramslog)
+   - [Log File Examples](#log-file-examples)
+8. [Class Diagram](#class-diagram)
+9. [Description of project files](#description-of-project-files)
+   - [`control/logger_utils.py`](#controllogger_utilspy)
+   - [`debug/debug_visualize_samples.py`](#debugdebug_visualize_samplespy)
+   - [`problem/gtsrb.py`](#problemgtsrbpy)
+   - [`problem/hu_image_data.py`](#problemhu_image_datapy)
+   - [`setup/setup.bat`](#setupsetupbat)
+   - [`setup/setup.sh`](#setup/setupsh)
+   - [`method/gaussian_bayes.py`](#methodgaussian_bayespy)
+   - [`method/histogram_bayes.py`](#methodhistogram_bayespy)
+
+## Project Structure
 
     BayesianTrafficSignClassifier
     │
@@ -36,106 +77,114 @@ Ten projekt ma na celu klasyfikację czarno-białych obrazów znaków drogowych 
     ├── .gitignore
     └── README.md
 
-Poniżej znajduje się krótki opis głównych katalogów i plików:
+Below is a brief description of the main directories and files:
 
-- **control**: Zawiera główne skrypty kontrolne projektu.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu control.
-  - `logger_utils.py`: Funkcje pomocnicze do logowania, ustawienia formatowania logów, poziomy logowania oraz mechanizmy zapisu logów do plików lub wyświetlania na konsoli.
-  - `main.py`: Główny skrypt do uruchamiania klasyfikatora. Zawiera logikę inicjalizacji, ładowania danych, trenowania modelu i ewaluacji wyników.
+- **control**: Contains the main control scripts of the project.
+  - `__init__.py`: Initialization file for the control module.
+  - `logger_utils.py`: Helper functions for logging, setting log formatting, log levels, and mechanisms for saving logs to files or displaying them on the console.
+  - `main.py`: Main script for running the classifier. Includes logic for initialization, data loading, model training, and evaluation of results.
 
-- **debug**: Zawiera skrypty do debugowania.
-  - `debug_visualize_samples.py`: Skrypt do wizualizacji próbek danych dla celów debugowania. Pomaga w zrozumieniu, jak wyglądają dane wejściowe oraz weryfikacji poprawności przetwarzania danych.
+- **debug**: Contains scripts for debugging.
+  - `debug_visualize_samples.py`: Script for visualizing data samples for debugging purposes. Helps understand the input data and verify the correctness of data processing.
 
-- **method**: Zawiera implementację metod bayesowskich.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu method.
-  - `gaussian_bayes.py`: Zawiera implementację parametrycznego klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego). Klasyfikator ten wykorzystuje założenie, że cechy mają rozkład normalny, aby obliczyć prawdopodobieństwa przynależności do klas.
-  - `histogram_bayes.py`: Zawiera implementację klasyfikatora nieparametrycznego klasyfikatora Bayesa (histogram wielowymiarowy). Klasyfikator oparty na histogramach cech, który wykorzystuje dystrybucje cech do obliczenia prawdopodobieństw przynależności do klas.
+- **method**: Contains the implementation of Bayes methods.
+  - `__init__.py`: Initialization file for the method module.
+  - `gaussian_bayes.py`: Contains the implementation of the parametric ML Bayes classifier (assuming normal distribution). This classifier uses the assumption that features follow a normal distribution to calculate class probabilities.
+  - `histogram_bayes.py`: Contains the implementation of the non-parametric Bayes classifier (multidimensional histogram). This classifier is based on histograms of features, using feature distributions to calculate class probabilities.
 
-- **problem**: Zawiera pliki i dane specyficzne dla problemu.
-  - `__init__.py`: Plik inicjalizacyjny dla modułu problem.
-  - `gtsrb.py`: Metody do obsługi danych GTSRB.
-  - `hu_image_data.py`: Metody do obsługi danych obrazowych z momentami Hu, ekstrakcji momentów Hu z obrazów znaków drogowych oraz podziału danych na zestawy treningowe i testowe.
-  - **data/GTSRB**: Katalog zawierający dane GTSRB (German Traffic Sign Recognition Benchmark). Dane te są używane do trenowania i testowania modeli klasyfikacyjnych.
-    - `gtsrb.zip`: Skompresowany plik z zestawem danych GTSRB.
+- **problem**: Contains files and data specific to the problem.
+  - `__init__.py`: Initialization file for the problem module.
+  - `gtsrb.py`: Methods for handling GTSRB data.
+  - `hu_image_data.py`: Methods for handling image data with Hu moments, extracting Hu moments from traffic sign images, and splitting the data into training and test sets.
+  - **data/GTSRB**: Directory containing the GTSRB (German Traffic Sign Recognition Benchmark) data. This data is used to train and test the classification models.
+    - `gtsrb.zip`: Compressed file with the GTSRB dataset.
 
-- **setup**: Zawiera skrypty instalacyjne i plik z wymaganiami.
-  - `requirements.txt`: Lista zależności wymaganych do projektu.
-  - `setup.bat`: Skrypt wsadowy dla systemu Windows do instalacji zależności i konfiguracji środowiska.
-  - `setup.sh`: Skrypt powłoki dla systemów Unix/Linux do instalacji zależności i konfiguracji środowiska.
+- **setup**: Contains installation scripts and the requirements file.
+  - `requirements.txt`: List of dependencies required for the project.
+  - `setup.bat`: Batch script for Windows to install dependencies and set up the environment.
+  - `setup.sh`: Shell script for Unix/Linux to install dependencies and set up the environment.
 
 
-## Instalacja i Konfiguracja Środowiska
+## Installation and Environment Setup
 
-### Wymagane moduły
-Plik `requirements.txt` zawiera wszystkie wymagane pakiety i ich wersje, które są niezbędne do uruchomienia projektu. 
+### Required Modules
+The `requirements.txt` file contains all the required packages and their versions necessary to run the project.
 
-Do obsługi setup'u środowiska wirtualnego wraz z instalacją odpowiednich modułów służdą skrypty `setup.bat` or `setup.sh`.
+To handle the setup of a virtual environment along with the installation of the necessary modules, use the `setup.bat` or `setup.sh` scripts.
 
 ### Windows
 
-1. Uruchom `setup/setup.bat`.
-2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe.
-3. Środowisko wirtualne zostanie aktywowane.
-4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
-5. Pakiety z `requirements.txt` zostaną zainstalowane.
-6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
+1. Run `setup/setup.bat`.
+2. The script will check if a virtual environment exists, and if not, it will create a new one.
+3. The virtual environment will be activated.
+4. A list of installed packages will be displayed before and after the installation of new packages.
+5. Packages from `requirements.txt` will be installed.
+6. Instructions for running the main script and deactivating the virtual environment will be displayed.
 
 ### Unix/Linux
 
-1. Uruchom `setup/setup.sh`.
-2. Skrypt sprawdzi, czy środowisko wirtualne istnieje, a jeśli nie, utworzy nowe przy użyciu `python3 -m venv`.
-3. Środowisko wirtualne zostanie aktywowane poprzez `source venv/bin/activate`.
-4. Lista zainstalowanych pakietów zostanie wyświetlona przed i po instalacji nowych pakietów.
-5. Pakiety z `requirements.txt` zostaną zainstalowane.
-6. Wyświetlone zostaną instrukcje dotyczące uruchamiania głównego skryptu i dezaktywacji środowiska wirtualnego.
+1. Run `setup/setup.sh`.
+2. The script will check if a virtual environment exists, and if not, it will create a new one using:
+    ```
+    python3 -m venv
+    ```
+3. The virtual environment will be activated via:
+    ```
+    source venv/bin/activate.
+    ```
+4. A list of installed packages will be displayed before and after the installation of new packages.
+5. Packages from `requirements.txt` will be installed.
+6. Instructions for running the main script and deactivating the virtual environment will be displayed.
 
-Alternatywnie, możesz ręcznie zainstalować wymagane biblioteki używając pip:
+Alternatively, you can manually install the required libraries using pip:
 ```
 pip install -r setup/requirements.txt
 ```
 
-## Uruchomienie Projektu
+## Running the Project
 
-Uruchom główny skrypt, który przeprowadzi wszystkie kroki projektu:
+Run the main script, which will execute all the project steps:
 ```
 python control/main.py
 ```
 
 ### control/main.py
 
-Główny plik uruchamiający proces przetwarzania danych i trenowania modeli klasyfikacyjnych.
+The main script initiates the data processing and model training process.
 
-#### Parametry:
-- `bin_count` (int): Liczba koszyków dla modelu histogramowego.
-- `data_dir` (str): Ścieżka do katalogu z danymi.
-- `zip_path` (str): Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
-- `debug` (bool): Flaga włączająca tryb debugowania.
-- `no_classes` (int): Liczba klas znaków drogowych. ( default: 5 - ze względu na ograniczenie rozmiaru projektu do 20 MB )
-- `no_features` (int): Liczba cech do użycia z momentów Hu. ( default: 7 - liczba momentów Hu )
-- `test_size` (float): Ułamek danych przeznaczonych na zestaw testowy. ( default: 0.2 )
-- `bin_count` (int): Liczba koszyków dla modelu histogramowego. ( default: 10 )
-- `clean` (bool): Flaga włączająca tryb czyszczenia.
+#### Parameters:
 
-#### Argumenty:
-- `--data_dir`: Katalog zawierający dane.
-- `--zip_path`: Ścieżka do pliku zip ze spakowanymi danymi w formacie train/class_dir.
-- `--debug`: Włącza tryb debugowania do wizualizacji danych.
-- `--test_size`: Ułamek danych do zestawu testowego (między 0.01 a 0.99).
-- `--no_classes`: Liczba klas. ( zależne od ilości posiadanych danych/klas )
-- `--no_features`: Liczba cech (momentów Hu) do użycia (między 1 a 7).
-- `--bin_count`: Liczba koszyków dla modelu histogramowego.
-- `--clean`: Włącza tryb czyszczenia plików generowanych podczas przetwarzania danych.    
+- `bin_count` (int): Number of bins for the histogram model.
+- `data_dir` (str): Path to the data directory.
+- `zip_path` (str): Path to the zip file containing the data in the format train/class_dir.
+- `debug` (bool): Flag to enable debugging mode.
+- `no_classes` (int): Number of traffic sign classes. (default: 5 - due to the project's size limit of 20 MB)
+- `no_features` (int): Number of features to use from Hu moments. (default: 7 - number of Hu moments)
+- `test_size` (float): Fraction of data reserved for the test set. (default: 0.2)
+- `bin_count` (int): Number of bins for the histogram model. (default: 10)
+- `clean` (bool): Flag to enable cleaning mode.
 
-Oto przykład uruchomienia z argumentami:
+#### Arguments:
+
+- `--data_dir`: Directory containing the data.
+- `--zip_path`: Path to the zip file with compressed data in the format train/class_dir.
+- `--debug`: Enables debugging mode for data visualization.
+- `--test_size`: Fraction of data for the test set (between 0.01 and 0.99).
+- `--no_classes`: Number of classes. (dependent on the amount of available data/classes)
+- `--no_features`: Number of features (Hu moments) to use (between 1 and 7).
+- `--bin_count`: Number of bins for the histogram model.
+- `--clean`: Enables cleaning mode for files generated during data processing.
+
+Here is an example of running with arguments:
 ```
 python control/main.py --clean --debug --test_size 0.2 --no_classes 5 --no_features 7 --bin_count 10
 ```
 
-## Szczegółowy Opis Działania Programu
+## Detailed Program Operation
 
-Program przetwarza dane i trenuje dwa modele klasyfikacyjne, monitorując cały proces poprzez logowanie. Poniżej znajduje się szczegółowy opis każdego kroku.
+The program processes the data and trains two classification models, monitoring the entire process through logging. Below is a detailed description of each step.
 
-### Krok 1: Rozpakowanie Danych
+### Step 1: Extracting Data
 
 ```
 logger.log("Step 1: Extracting GTSRB data started.")
@@ -143,15 +192,16 @@ gtsrb = GTSRB(data_dir, zip_path)
 gtsrb.extract()
 ```
 
-**Opis:** Rozpakowanie danych z pliku zip z zasobami German Traffic Sign Recognition Benchmark (GTSRB).
+**Description:** Extracting data from the zip file containing the German Traffic Sign Recognition Benchmark (GTSRB) resources
 
-**Czynności:**
-- Zainicjowanie obiektu GTSRB z podaniem ścieżki do katalogu z danymi oraz ścieżki do pliku zip.
-- Rozpakowanie pliku zip do określonego katalogu.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia operacji rozpakowywania danych.
+- Initialize the GTSRB object with the data directory path and the zip file path.
+- Extract the zip file to the specified directory.
 
-### Krok 2: Przetwarzanie Danych
+**Logging:** Record the start of the data extraction operation.
+
+### Step 2: Data Processing
 
 ```
 logger.log("Step 2: Preprocessing data started.")
@@ -162,17 +212,18 @@ print(f'Train Hu moments size: {hu_train.shape[0]}, Test Hu moments size: {hu_te
 print("Data preprocessing complete. Hu moments logged to", log_file)
 ```
 
-**Opis:** Przetwarzanie danych, w tym obliczanie momentów Hu, podział na zbiory treningowy i testowy oraz logowanie wyników.
+**Description:** Processing data, including calculating Hu moments, splitting into training and test sets, and logging results.
 
-**Czynności:**
-- Inicjalizacja obiektu HuImageData z danymi z katalogu, liczbą klas, liczbą cech i rozmiarem zbioru testowego.
-- Podział danych na zbiory treningowy i testowy oraz obliczenie momentów Hu.
-- Logowanie momentów Hu dla zbioru treningowego.
-- Wyświetlenie informacji o rozmiarach zbiorów treningowego i testowego.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia przetwarzania danych oraz logowanie momentów Hu do pliku hu_moments_log.txt.
+- Initialize the HuImageData object with data from the directory, number of classes, number of features, and test set size.
+- Split the data into training and test sets and calculate Hu moments.
+- Log the Hu moments for the training set.
+- Display information about the sizes of the training and test sets.
 
-### Krok (opcjonalny): Wizualizacja Przykładowych Danych
+**Logging:** Record the start of data processing and log Hu moments to the `hu_moments_log.txt` file.
+
+### Optional Step: Visualizing Sample Data
 
 ```
 if debug:
@@ -180,15 +231,16 @@ if debug:
     logger.run_script('debug/debug_visualize_samples.py', args=[data_dir])
 ```
 
-**Opis:** Wizualizacja przykładowych danych (opcjonalne, w zależności od trybu debugowania).
+**Description:** Visualize sample data (optional, depending on debugging mode).
 
-**Czynności:**
-- Rejestrowanie rozpoczęcia wizualizacji danych.
-- Uruchomienie skryptu debug/debug_visualize_samples.py, który wizualizuje próbki danych.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia opcjonalnego kroku wizualizacji.
+- Record the start of data visualization.
+- Run the debug/debug_visualize_samples.py script to visualize data samples.
 
-### Krok 3: Uczenie Parametrycznego Klasyfikatora Bayesa ML (przy założeniu rozkładu normalnego)
+**Logging**: Record the start of the optional visualization step.
+
+### Step 3: Training Gaussian Bayes Classifier (assuming normal distribution)
 
 ```
 logger.log("Step 3: Training Gaussian Bayes model started.")
@@ -196,15 +248,16 @@ g_classifier = GaussianBayesClassifier(X_train=hu_train, y_train=y_train, X_test
 g_classifier.fit()
 ```
 
-**Opis:** Trening klasyfikatora Bayesa z założeniem rozkładu normalnego (Gaussian Bayes).
+**Description:** Train the Gaussian Bayes classifier assuming normal distribution.
 
-**Czynności:**
-- Inicjalizacja obiektu GaussianBayesClassifier z danymi treningowymi i testowymi.
-- Trening modelu na zbiorze treningowym.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia treningu klasyfikatora Gaussian Bayes.
+- Initialize the GaussianBayesClassifier object with training and test data.
+- Train the model on the training set.
 
-### Krok 4: Uczenie Nieparametrycznego Klasyfikatora Bayesa (histogram wielowymiarowy)
+**Logging:** Record the start of training the Gaussian Bayes classifier.
+
+### Step 4: Training Histogram Bayes Classifier (non-parametric)
 
 ```
 logger.log("Step 4: Training Histogram Bayes model started.")
@@ -213,15 +266,16 @@ h_classifier.fit()
 h_classifier.log_histograms(log_file=os.path.join(log_dir, 'train_histograms.txt'))
 ```
 
-**Opis:** Trening nieparametrycznego klasyfikatora Bayesa z wykorzystaniem histogramów.
+**Description:** Train the Histogram Bayes classifier (non-parametric).
 
-**Czynności:**
-- Inicjalizacja obiektu HistogramBayesClassifier z danymi treningowymi i testowymi oraz liczbą binów.
-- Trening modelu na zbiorze treningowym.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia treningu klasyfikatora Histogram Bayes oraz zapis histogramów.
+- Initialize the HistogramBayesClassifier object with training and test data.
+- Train the model on the training set.
 
-### Krok (opcjonalny): Wizualizacja Histogramów Danej Klasy
+**Logging:** Record the start of training the Histogram Bayes classifier.
+
+### Optional step: Visualization of Histograms for a Given Class
 
 ```
 if debug:
@@ -229,51 +283,54 @@ if debug:
     h_classifier.print_histograms_for_class(1)
 ```
 
-**Opis:** Wizualizacja histogramów dla wybranej klasy (opcjonalne, w zależności od trybu debugowania).
+**Description:** Visualization of histograms for a selected class (optional, depending on debug mode).
 
-**Czynności:**
-- Rejestrowanie rozpoczęcia wizualizacji histogramów.
-- Wyświetlenie histogramów dla klasy 1.
+**Actions:**
 
-**Logowanie:** Rejestrowanie rozpoczęcia opcjonalnego kroku wizualizacji histogramów.
+- Logging the start of histogram visualization.
+- Displaying histograms for class 1.
 
-### Krok 5: Klasyfikacja - Parametryczny Klasyfikator Bayesa ML
+**Logging:** Logging the start of the optional step of histogram visualization.
+
+### Step 5: Classification - Parametric Bayesian ML Classifier
 
 ```
 y_pred = g_classifier.predict(predict_log_file=os.path.join(log_dir, 'g_classifier_predict_predictions.txt'))
 g_classifier.print_classification_report(y_pred)
 ```
 
-**Opis:** Przewidywanie klas na zbiorze testowym za pomocą parametrycznego klasyfikatora Bayesa.
+**Description:** Predicting classes on the test set using a parametric Bayesian classifier.
 
-**Czynności:**
-- Przewidywanie klas dla zbioru testowego i zapis wyników do pliku g_classifier_predict_predictions.txt.
-- Wyświetlenie raportu z klasyfikacji.
+**Actions:**
 
-**Logowanie:** Zapis wyników predykcji i raportu z klasyfikacji.
+- Predicting classes for the test set and saving results to the file g_classifier_predict_predictions.txt.
+- Displaying the classification report.
 
-### Krok 6: Klasyfikacja - Nieparametryczny Klasyfikator Bayesa
+**Logging:** Logging prediction results and the classification report.
 
-**Opis:** Przewidywanie klas na zbiorze testowym za pomocą nieparametrycznego klasyfikatora Bayesa.
+### Step 6: Classification - Non-parametric Bayesian Classifier
 
-**Czynności:**
-- Przewidywanie klas dla zbioru testowego i zapis wyników do pliku h_classifier_predict_predictions.txt.
-- Wyświetlenie raportu z klasyfikacji.
+**Description:** Predicting classes on the test set using a non-parametric Bayesian classifier.
 
-**Logowanie:** Zapis wyników predykcji i raportu z klasyfikacji.
+**Actions:**
 
-## Podsumowanie
+- Predicting classes for the test set and saving results to the file h_classifier_predict_predictions.txt.
+- Displaying the classification report.
 
-Program składa się z kilku kroków, od rozpakowania danych, przez przetwarzanie i uczenie modeli klasyfikacyjnych, aż po przewidywanie klas na zbiorze testowym. Każdy krok jest starannie logowany, co umożliwia śledzenie postępu i diagnozowanie ewentualnych problemów. Dodatkowe kroki wizualizacji mogą być wykonywane w trybie debugowania, co pomaga w analizie i zrozumieniu danych.
+**Logging:** Logging prediction results and the classification report.
 
+## Summary
 
-# Plik Logów Monitorujący Postęp: `main.log`
+The project provides a complete workflow for classifying traffic signs using a Bayes classifier. It includes data extraction, processing, model training, evaluation, and logging. The script is modular, allowing easy modification and debugging, with a focus on logging key steps for monitoring and error tracing.
 
-## Opis
+ 
+## Progress monitoring log file: `main.log`
 
-`main.log` jest głównym plikiem logów, który monitoruje postęp całego procesu przetwarzania danych, trenowania modeli oraz inne istotne operacje wykonywane przez program. Jest to kluczowy plik do śledzenia, ponieważ zawiera chronologiczny zapis wszystkich ważnych kroków i ewentualnych błędów, które wystąpiły podczas działania programu.
+### Description
 
-## Przykład Zawartości `main.log`
+`main.log` is the primary log file that tracks the progress of the entire data processing and model training process, as well as other important operations performed by the program. This file is crucial for monitoring because it contains a chronological record of all significant steps and any errors that occurred during the program's execution.
+
+### Example Content of `main.log`
 
 ```
 2024-06-13 11:45:12 - Process started.
@@ -306,7 +363,7 @@ weighted avg       0.43      0.44      0.42       576
 2024-06-13 11:45:42 - Process completed.
 ```
 
-# Raport klasyfikacji - przykład
+## Classification Report - Example
 
     Gaussian Bayes Classification Report:
                 precision    recall  f1-score   support
@@ -322,86 +379,86 @@ weighted avg       0.43      0.44      0.42       576
     weighted avg       0.44      0.47      0.43       576
 
 
-## Ogólna wydajność modelu
-- **Accuracy (dokładność):** 0.47
-  - Dokładność oznacza odsetek poprawnie sklasyfikowanych próbek spośród wszystkich próbek. W tym przypadku model prawidłowo sklasyfikował 47% wszystkich próbek.
+## Model Performance
+- **Accuracy:** 0.47
+  - Accuracy represents the percentage of correctly classified samples out of all samples. In this case, the model correctly classified 47% of all samples.
 
-## Wydajność dla poszczególnych klas
+## Performance for Individual Classes
 
-### Klasa 0:
-- **Precision (precyzja):** 0.51
-  - Precyzja to stosunek liczby prawdziwie pozytywnych wyników do sumy prawdziwie pozytywnych i fałszywie pozytywnych wyników. Oznacza to, że z wszystkich próbek sklasyfikowanych jako klasa 0, 51% było poprawnie sklasyfikowanych.
-- **Recall (czułość):** 0.68
-  - Czułość to stosunek liczby prawdziwie pozytywnych wyników do sumy prawdziwie pozytywnych i fałszywie negatywnych wyników. Oznacza to, że z wszystkich prawdziwych próbek klasy 0, 68% zostało prawidłowo sklasyfikowanych jako klasa 0.
+### Class 0:
+- **Precision:** 0.51
+  - Precision is the ratio of true positive results to the sum of true positive and false positive results. This means that out of all samples classified as class 0, 51% were correctly classified.
+- **Recall:** 0.68
+  - Recall is the ratio of true positive results to the sum of true positive and false negative results. This means that out of all actual samples of class 0, 68% were correctly classified as class 0.
 - **F1-score:** 0.58
-  - F1-score to średnia harmoniczna precyzji i czułości. Jest to miara ogólnej wydajności modelu dla tej klasy.
+  - F1-score is the harmonic mean of precision and recall. It is a measure of the overall performance of the model for this class.
 - **Support:** 142
-  - Support to liczba rzeczywistych wystąpień danej klasy w zbiorze danych testowych.
+  - Support is the number of actual occurrences of the class in the test dataset.
 
-# Pliki Logów
+## Log Files
 
-## control/logger_utils.py
+### control/logger_utils.py
 
-Plik `logger_utils.py` zawiera klasy Tee i Logger, które zarządzają zapisywaniem komunikatów logów do plików oraz ich wyświetlaniem w terminalu.
+The `logger_utils.py` file contains the Tee and Logger classes, which manage writing log messages to files and displaying them in the terminal.
 
-## Generowane Pliki Logów
+## Generated Log Files
 
 ### `g_classifier_predictions.log`
 
-**Opis:**
-Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klasyfikator Gaussian Bayes.
+**Description:**
+This file contains detailed information regarding predictions made by the Gaussian Bayes classifier.
 
-**Zawartość:**
-- Szczegóły predykcji dla każdej próbki w zestawie testowym.
-- Prawdopodobieństwa a posteriori dla każdej klasy.
-- Prawdopodobieństwa warunkowe dla każdej cechy i klasy.
+**Content:**
+- Prediction details for each sample in the test set.
+- Posterior probabilities for each class.
+- Conditional probabilities for each feature and class.
 
 **Format:**
-Każda linia zawiera informacje dla jednej próbki:
-- Identyfikator próbki, prawdziwa klasa, przewidywana klasa, prawdopodobieństwa a posteriori, prawdopodobieństwa warunkowe.
+Each line contains information for one sample:
+- Sample ID, true class, predicted class, posterior probabilities, conditional probabilities.
 
 ### `h_classifier_predictions.log`
 
-**Opis:**
-Plik zawiera szczegółowe informacje dotyczące predykcji dokonanych przez klasyfikator Histogram Bayes.
+**Description:**
+This file contains detailed information regarding predictions made by the Histogram Bayes classifier.
 
-**Zawartość:**
-- Szczegóły predykcji dla każdej próbki w zestawie testowym.
-- Prawdopodobieństwa klas dla każdej próbki na podstawie histogramów.
+**Content:**
+- Prediction details for each sample in the test set.
+- Class probabilities for each sample based on histograms.
 
 **Format:**
-Każda linia zawiera informacje dla jednej próbki:
-- Identyfikator próbki, prawdziwa klasa, przewidywana klasa, prawdopodobieństwa klas.
+Each line contains information for one sample:
+- Sample ID, true class, predicted class, class probabilities.
 
 ### `hu_moments.log`
 
-**Opis:**
-Pliki zawierają obliczone momenty Hu dla próbek należących do określonej klasy.
+**Description:**
+This file contains the computed Hu moments for samples belonging to a specific class.
 
-**Zawartość:**
-- Obliczone momenty Hu dla próbek.
-- Zapisane momenty Hu dla analizy i debugowania.
+**Content:**
+- Computed Hu moments for samples.
+- Logged Hu moments for analysis and debugging.
 
 **Format:**
-Każda linia zawiera momenty Hu dla jednej próbki:
-- Identyfikator próbki, wartości momentów Hu.
+Each line contains Hu moments for one sample:
+- Sample ID, Hu moments values.
 
 ### `histograms.log`
 
-**Opis:**
-Pliki zawierają histogramy dla każdej cechy i klasy.
+**Description:**
+This file contains histograms for each feature and class.
 
-**Zawartość:**
-- Histogramy dla każdej cechy i klasy.
-- Zapisane histogramy do analizy i debugowania.
+**Content:**
+- Histograms for each feature and class.
+- Logged histograms for analysis and debugging.
 
 **Format:**
-Każda linia zawiera wartości histogramu dla jednej cechy:
-- Indeks cechy, wartości histogramu dla tej cechy.
+Each line contains histogram values for one feature:
+- Feature index, histogram values for that feature.
 
-## Przykłady Plików Logów
+## Log File Examples
 
-### Przykład wpisu w `g_classifier_predictions.log`:
+### Example Entry in `g_classifier_predictions.log`:
 ```
 Sample 0: [  2.16200585   6.99546412   8.97868627   8.7388965   17.76683571
   12.90594896 -17.7310433 ]
@@ -413,7 +470,7 @@ Sample 1: [  2.67146131   7.13761203   9.67750212   9.70987065 -19.40559961
 Predicted class: 3
 Class probabilities: {0: 3, 1: 3, 2: 3, 3: 3, 4: 3}
 ```
-### Przykład wpisu w `h_classifier_predictions.log`:
+### Example Entry in `h_classifier_predictions.log`:
 ```
 Sample 0: [  2.16200585   6.99546412   8.97868627   8.7388965   17.76683571
   12.90594896 -17.7310433 ]
@@ -425,7 +482,7 @@ Sample 1: [  2.67146131   7.13761203   9.67750212   9.70987065 -19.40559961
 Predicted class: 0
 Class probabilities: {0: 6.810747944179981e-05, 1: 9.922832670994054e-06, 2: 2.1797952038828098e-05, 3: 2.6278723219514598e-05, 4: 3.2232811716693285e-06}
 ```
-### Przykład wpisu w `hu_moments.log`:
+### Example Entry in `hu_moments.log`:
 ```
 Class 0 Hu Moments:
 Sample 1 Hu Moments: [  2.43038677   6.09687194   9.14487504   9.12304103 -18.35530063
@@ -433,7 +490,7 @@ Sample 1 Hu Moments: [  2.43038677   6.09687194   9.14487504   9.12304103 -18.35
 Sample 2 Hu Moments: [  2.58046413   8.72705975  12.73975729  11.98774375  24.67979376
   16.69358992 -24.40558514]
 ```
-### Przykład wpisu w `histograms.log`:
+### Example Entry in `histograms.log`:
 ```
 Class 0 histograms:
 Feature 0: histogram: [ 6  5 71 99 69 62 74 59 36 43], bin_edges: [1.79549735 1.9165121  2.03752686 2.15854161 2.27955636 2.40057112
@@ -442,22 +499,23 @@ Feature 1: histogram: [ 40  86 111 140  75  38  21   5   5   3], bin_edges: [ 5.
   8.75178675  9.25355081  9.75531487 10.25707893 10.75884299]
 ```
 
-## Uwagi
+### Notes
 
-- **Pliki logów są generowane w odpowiednich momentach pracy programu, w zależności od wykonywanych operacji.**
-- **Pliki `g_classifier_predictions.log` i `h_classifier_predictions.log` są generowane po wykonaniu predykcji przez odpowiednie klasyfikatory.**
-- **Pliki `hu_moments.log` są generowane podczas obliczania momentów Hu.**
-- **Pliki `histograms.log` są generowane podczas tworzenia histogramów dla cech i klas.**
+- Log files are generated at appropriate points in the program's execution, depending on the operations performed.
+- The files `g_classifier_predictions.log` and `h_classifier_predictions.log` are generated after predictions are made by the respective classifiers.
+- The files `hu_moments.log` are generated during the calculation of Hu moments.
+- The files `histograms.log` are generated during the creation of histograms for features and classes.
 
 
-## Diagram klas
+## Class Diagram
 
-    Main: Główna klasa odpowiedzialna za inicjalizację projektu, wczytywanie danych, trenowanie modeli i ewaluację wyników.
-    LoggerUtils: Klasa zawierająca metody do logowania oraz uruchamiania skryptów pomocniczych.
-    GaussianBayesClassifier: Klasa implementująca parametryczny klasyfikator Bayesa przy założeniu rozkładu normalnego.
-    HistogramBayesClassifier: Klasa implementująca nieparametryczny klasyfikator Bayesa oparty na histogramach.
-    GTSRB: Klasa odpowiedzialna za zarządzanie danymi GTSRB, w tym ich rozpakowywanie.
-    HuImageData: Klasa odpowiedzialna za przetwarzanie danych obrazowych, w tym obliczanie momentów Hu i podział danych na zbiory treningowy i testowy.
+- Main: The main class responsible for project initialization, data loading, model training, and evaluation of results.
+- LoggerUtils: The class containing methods for logging and running auxiliary scripts.
+- GaussianBayesClassifier: The class implementing a parametric Bayes classifier assuming a normal distribution.
+- HistogramBayesClassifier: The class implementing a non-parametric Bayes classifier based on histograms.
+- GTSRB: The class responsible for managing GTSRB data, including its extraction.
+- HuImageData: The class responsible for processing image data, including calculating Hu moments and splitting the data into training and test sets.
+
 
 ```mermaid
 classDiagram
@@ -522,92 +580,92 @@ classDiagram
     Main --> HuImageData : uses
 ```
 
-## Opis Głównych Plików
+## Description of project files
 
-### control/logger_utils.py
+### `control/logger_utils.py`
 
-Zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
+Manages logging messages to a file and displaying them in the terminal.
 
-#### Klasa Tee:
-- Przechwytuje wyjście i przekierowuje je zarówno do pliku, jak i do terminala.
+#### Tee Class:
+- Captures output and redirects it both to a file and the terminal.
 
-#### Klasa Logger:
-- Zarządza zapisywaniem komunikatów logów do pliku oraz ich wyświetlaniem w terminalu.
+#### Logger Class:
+- Manages logging messages to a file and displaying them in the terminal.
 
-### debug/debug_visualize_samples.py
+### `debug/debug_visualize_samples.py`
 
-Wyświetla próbki obrazów z odpowiadającymi im momentami Hu w trybie debugowania.
+Displays image samples with their corresponding Hu moments in debug mode.
 
-#### Funkcja show_sample_images:
-- Wyświetla próbki obrazów z momentami Hu.
-- Parametry:
-  - `images` (ndarray): Tablica z obrazami.
-  - `labels` (ndarray): Tablica z etykietami klas.
-  - `hu_moments` (ndarray): Tablica z momentami Hu.
-  - `num_samples` (int): Liczba próbek do wyświetlenia (domyślnie 10).
+#### show_sample_images Function:
+- Displays image samples with Hu moments.
+- Parameters:
+  - `images` (ndarray): Array of images.
+  - `labels` (ndarray): Array of class labels.
+  - `hu_moments` (ndarray): Array of Hu moments.
+  - `num_samples` (int): Number of samples to display (default is 10).
 
-### problem/gtsrb.py
+### `problem/gtsrb.py`
 
-Zarządza wypakowywaniem danych GTSRB (German Traffic Sign Recognition Benchmark) z pliku zip.
+Manages unpacking of GTSRB (German Traffic Sign Recognition Benchmark) data from a zip file.
 
-#### Klasa GTSRB:
-- `__init__`: Inicjalizuje klasę z określonymi ścieżkami do wypakowania i pliku zip.
-- `extract`: Wypakowuje plik z danymi GTSRB do określonego folderu.
+#### GTSRB Class:
+- `__init__`: Initializes the class with specified paths for extraction and the zip file.
+- `extract`: Extracts the GTSRB data file to the specified folder.
 
-### problem/hu_image_data.py
+### `problem/hu_image_data.py`
 
-Przetwarza obrazy znaków drogowych, oblicza momenty Hu oraz dzieli dane na zestawy treningowe i testowe.
+Processes traffic sign images, computes Hu moments, and splits data into training and test sets.
 
-#### Klasa HuImageData:
-- `__init__`: Inicjalizuje klasę z określonymi parametrami.
-- `_normalize_hu_moments`: Normalizuje momenty Hu, stosując skalę logarytmiczną.
-- `_extract_hu_moments_image_data`: Ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
-- `split_train_test_data`: Dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
-- `log_hu_moments`: Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
+#### HuImageData Class:
+- `__init__`: Initializes the class with specified parameters.
+- `_normalize_hu_moments`: Normalizes Hu moments using a logarithmic scale.
+- `_extract_hu_moments_image_data`: Loads and processes GTSRB data, computing Hu moments for each image.
+- `split_train_test_data`: Splits data into training and test sets and saves them to .npy files.
+- `log_hu_moments`: Logs Hu moments for each class to a text file.
 
-### setup/setup.bat
+### `setup/setup.bat`
 
-Skrypt instalacyjny dla systemu Windows.
+Installation script for Windows.
 
-#### Działanie:
-- Sprawdza, czy środowisko wirtualne nie istnieje, a jeśli nie, tworzy nowe środowisko wirtualne.
-- Aktywuje środowisko wirtualne.
-- Wyświetla listę zainstalowanych pakietów przed i po instalacji nowych pakietów.
-- Instaluje wymagania z pliku requirements.txt.
-- Wyświetla instrukcje dotyczące uruchamiania głównego skryptu oraz dezaktywacji środowiska wirtualnego.
+#### Functionality:
+- Checks if the virtual environment does not exist, and if not, creates a new virtual environment.
+- Activates the virtual environment.
+- Displays the list of installed packages before and after installing new packages.
+- Installs requirements from the requirements.txt file.
+- Displays instructions for running the main script and deactivating the virtual environment.
 
-### setup/setup.sh
+### `setup/setup.sh`
 
-Skrypt instalacyjny dla systemów Unix.
+Installation script for Unix systems.
 
-#### Działanie:
-- Tworzy środowisko wirtualne, jeśli nie istnieje.
-- Aktywuje środowisko wirtualne.
-- Wyświetla listę zainstalowanych pakietów przed i po instalacji nowych pakietów.
-- Instaluje wymagania z pliku requirements.txt.
-- Wyświetla instrukcje dotyczące uruchamiania głównego skryptu oraz dezaktywacji środowiska wirtualnego.
+#### Functionality:
+- Creates a virtual environment if it does not exist.
+- Activates the virtual environment.
+- Displays the list of installed packages before and after installing new packages.
+- Installs requirements from the requirements.txt file.
+- Displays instructions for running the main script and deactivating the virtual environment.
 
-### method/gaussian_bayes.py
+### `method/gaussian_bayes.py`
 
-Klasyfikator Bayesa z wykorzystaniem rozkładów Gaussa do modelowania rozkładów cech.
+Bayes classifier using Gaussian distributions to model feature distributions.
 
-#### Klasa GaussianBayesClassifier:
-- `__init__`: Inicjalizuje klasyfikator na podstawie danych treningowych i testowych.
-- `fit`: Trenuje klasyfikator na podstawie danych treningowych.
-- `predict`: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
-- `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
-- `_calculate_posterior`: Oblicza prawdopodobieństwo a posteriori dla każdej klasy.
-- `_calculate_likelihood`: Oblicza prawdopodobieństwo warunkowe dla danej klasy i przykładu.
+#### GaussianBayesClassifier Class:
+- `__init__`: Initializes the classifier with training and test data.
+- `fit`: Trains the classifier using the training data.
+- `predict`: Predicts classes for test data and logs detailed prediction information to a file.
+- `print_classification_report`: Prints a classification report based on test data and predictions.
+- `_calculate_posterior`: Calculates posterior probability for each class.
+- `_calculate_likelihood`: Calculates conditional probability for a given class and example.
 
-### method/histogram_bayes.py
+### `method/histogram_bayes.py`
 
-Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
+Bayes classifier using histograms to model feature distributions.
 
-#### Klasa HistogramBayesClassifier:
-- `__init__`: Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
-- `fit`: Trenuje klasyfikator na podstawie danych treningowych.
-- `log_histograms`: Zapisuje histogramy do pliku tekstowego.
-- `predict`: Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
-- `print_classification_report`: Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
-- `_calculate_class_probabilities`: Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
-- `print_histograms_for_class`: Drukuje histogramy dla wszystkich cech dla określonej klasy.
+#### HistogramBayesClassifier Class:
+- `__init__`: Initializes the classifier with a specified number of bins for histograms.
+- `fit`: Trains the classifier using the training data.
+- `log_histograms`: Logs histograms to a text file.
+- `predict`: Predicts classes for test data and logs detailed prediction information to a file.
+- `print_classification_report`: Prints a classification report based on test data and predictions.
+- `_calculate_class_probabilities`: Calculates class probabilities for a single example based on histograms.
+- `print_histograms_for_class`: Prints histograms for all features for a specified class.
