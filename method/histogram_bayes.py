@@ -4,19 +4,19 @@ import matplotlib.pyplot as plt
 
 class HistogramBayesClassifier:
     """
-    Klasyfikator Bayesa z wykorzystaniem histogramów do modelowania rozkładów cech.
+    Bayes Classifier using histograms to model feature distributions.
     """
     
     def __init__(self, bins, X_train, y_train, X_test, y_test):
         """
-        Inicjalizuje klasyfikator z określoną liczbą przedziałów (binów) dla histogramów.
+        Initializes the classifier with a specified number of bins for the histograms.
 
         Parameters:
-        - bins (int): Liczba przedziałów dla histogramów.
-        - X_train (numpy.ndarray): Tablica z cechami treningowymi.
-        - y_train (numpy.ndarray): Tablica z etykietami klas treningowych.
-        - X_test (numpy.ndarray): Tablica z cechami testowymi.
-        - y_test (numpy.ndarray): Tablica z etykietami klas testowych.
+        - bins (int): Number of bins for the histograms.
+        - X_train (numpy.ndarray): Array with training features.
+        - y_train (numpy.ndarray): Array with training class labels.
+        - X_test (numpy.ndarray): Array with testing features.
+        - y_test (numpy.ndarray): Array with testing class labels.
         """
         self.bins = bins
         self.histograms = {}
@@ -28,10 +28,10 @@ class HistogramBayesClassifier:
 
     def fit(self):
         """
-        Trenuje klasyfikator na podstawie danych treningowych, obliczając histogramy dla każdej klasy i cechy.
+        Trains the classifier based on the training data by calculating histograms for each class and feature.
         """
         if self.X_train is None or self.y_train is None:
-            raise ValueError("Brak danych treningowych. Ustaw dane treningowe przy inicjalizacji klasy.")
+            raise ValueError("No training data. Set the training data during class initialization.")
         
         self.classes = np.unique(self.y_train)
         for cls in self.classes:
@@ -42,10 +42,10 @@ class HistogramBayesClassifier:
 
     def log_histograms(self, log_file):
         """
-        Zapisuje histogramy do pliku tekstowego.
+        Saves histograms to a text file.
 
         Parameters:
-        - log_file (str): Ścieżka do pliku, w którym będą zapisywane histogramy.
+        - log_file (str): Path to the file where histograms will be saved.
         """
         with open(log_file, 'w') as f:
             for cls, hists in self.histograms.items():
@@ -56,13 +56,13 @@ class HistogramBayesClassifier:
     
     def predict(self, predict_log_file):
         """
-        Przewiduje klasy dla danych testowych i zapisuje szczegółowe informacje o predykcji do pliku.
+        Predicts classes for the test data and saves detailed prediction information to a file.
 
         Parameters:
-        - predict_log_file (str): Ścieżka do pliku, w którym będą zapisywane szczegółowe informacje o predykcji.
+        - predict_log_file (str): Path to the file where detailed prediction information will be saved.
 
         Returns:
-        - numpy.ndarray: Przewidywane etykiety klas dla zbioru testowego.
+        - numpy.ndarray: Predicted class labels for the test set.
         """
         y_pred = []
         with open(predict_log_file, 'w') as f:
@@ -75,13 +75,13 @@ class HistogramBayesClassifier:
     
     def _calculate_class_probabilities(self, x):
         """
-        Oblicza prawdopodobieństwa klas dla pojedynczego przykładu na podstawie histogramów.
+        Calculates class probabilities for a single example based on the histograms.
 
         Parameters:
-        - x (numpy.ndarray): Pojedynczy przykład.
+        - x (numpy.ndarray): Single example.
 
         Returns:
-        - dict: Słownik z klasami i ich odpowiadającymi prawdopodobieństwami.
+        - dict: Dictionary with classes and their corresponding probabilities.
         """
         class_probs = {}
         for cls in self.classes:
@@ -97,20 +97,20 @@ class HistogramBayesClassifier:
     
     def print_classification_report(self, y_pred):
         """
-        Drukuje raport klasyfikacji na podstawie danych testowych i przewidywań.
+        Prints the classification report based on the test data and predictions.
 
         Parameters:
-        - y_pred (numpy.ndarray): Przewidywane etykiety klas.
+        - y_pred (numpy.ndarray): Predicted class labels.
         """
         print("Histogram Bayes Classification Report:")
         print(classification_report(self.y_test, y_pred))
     
     def print_histograms_for_class(self, cls):
         """
-        Drukuje histogramy dla wszystkich cech dla określonej klasy.
+        Prints histograms for all features for a specified class.
 
         Parameters:
-        - cls (int): Klasa, dla której mają być wyświetlone histogramy.
+        - cls (int): Class for which histograms should be displayed.
         """
         if cls not in self.histograms:
             raise ValueError(f"Class {cls} not found in the trained model.")
