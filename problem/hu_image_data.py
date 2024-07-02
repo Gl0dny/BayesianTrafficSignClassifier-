@@ -1,19 +1,19 @@
 import os
 import numpy as np
-from PIL import Image  # Importowanie Image z biblioteki PIL (Pillow)
+from PIL import Image
 from sklearn.model_selection import train_test_split
 import cv2
 
 class HuImageData:
     def __init__(self, data_dir, no_classes, no_features=7, test_size=0.2):
         """
-        Inicjalizuje klasę HuImageData z określonymi parametrami.
+        Initializes the HuImageData class with specified parameters.
 
         Parameters:
-        - data_dir (str): Ścieżka do katalogu z danymi GTSRB.
-        - no_classes (int): Liczba klas znaków drogowych.
-        - no_features (int): Liczba cech do użycia z momentów Hu (domyślnie 7).
-        - test_size (float): Ułamek danych przeznaczonych na zestaw testowy (domyślnie 0.2).
+        - data_dir (str): Path to the GTSRB data directory.
+        - no_classes (int): Number of traffic sign classes.
+        - no_features (int): Number of features to use from Hu moments (default is 7).
+        - test_size (float): Fraction of data to be used as the test set (default is 0.2).
         """
         self.data_dir = data_dir
         self.no_classes = no_classes
@@ -22,13 +22,13 @@ class HuImageData:
 
     def _normalize_hu_moments(self, hu_moments):
         """
-        Normalizuje momenty Hu, stosując skalę logarytmiczną.
+        Normalizes Hu moments using a logarithmic scale.
 
         Parameters:
-        - hu_moments (ndarray): Tablica momentów Hu.
+        - hu_moments (ndarray): Array of Hu moments.
 
         Returns:
-        - ndarray: Znormalizowane momenty Hu.
+        - ndarray: Normalized Hu moments.
         """
         for i in range(len(hu_moments)):
             for j in range(len(hu_moments[i])):
@@ -37,64 +37,61 @@ class HuImageData:
 
     def _extract_hu_moments_image_data(self):
         """
-        Funkcja ładuje i przetwarza dane GTSRB, obliczając momenty Hu dla każdego obrazu.
+        Loads and processes the GTSRB data, calculating Hu moments for each image.
 
         Returns:
         - tuple: (ndarray, ndarray, ndarray)
-            - images: Tablica z obrazami.
-            - hu_moments: Tablica z momentami Hu.
-            - labels: Tablica z etykietami klas.
+            - images: Array of images.
+            - hu_moments: Array of Hu moments.
+            - labels: Array of class labels.
         """
         images = []
         hu_moments = []
         labels = []
 
-        for class_id in range(self.no_classes):  # Iteracja przez każdą klasę
+        for class_id in range(self.no_classes):
             class_dir = os.path.join(self.data_dir, 'train', str(class_id))
             if not os.path.exists(class_dir):
                 continue
 
-            for img_name in os.listdir(class_dir):  # Iteracja przez każdy obraz w klasie
+            for img_name in os.listdir(class_dir):
                 try:
                     image = Image.open(os.path.join(class_dir, img_name))
-                    # Konwersja obrazu do skali szarości
                     image = image.convert('L')
                     image = image.resize((64, 64))
                     image_array = np.array(image)
 
-                    # Obliczanie momentów Hu
                     moments = cv2.moments(image_array)
                     hu_moments_image = cv2.HuMoments(moments).flatten()
 
                     images.append(image_array)
-                    hu_moments.append(hu_moments_image[:self.no_features])  # Używa tylko określonej liczby cech
+                    hu_moments.append(hu_moments_image[:self.no_features])
                     labels.append(class_id)
                 except Exception as e:
                     print("Error processing image:", e)
 
-        # Normalizacja momentów Hu
         hu_moments = self._normalize_hu_moments(np.array(hu_moments))
 
         return np.array(images), hu_moments, np.array(labels)
 
     def split_train_test_data(self, random_state=42):
         """
-        Funkcja dzieli dane na zestawy treningowe i testowe oraz zapisuje je do plików .npy.
+        Splits the data into training and test sets and saves them to .npy files.
 
         Parameters:
-        - random_state (int): Losowy seed dla podziału danych (domyślnie 42).
+        - random_state (int): Random seed for data splitting (default is 42).
 
         Returns:
         - tuple: (ndarray, ndarray, ndarray, ndarray, ndarray, ndarray)
-            - X_train: Obrazy treningowe.
-            - X_test: Obrazy testowe.
-            - hu_train: Momentu Hu dla zestawu treningowego.
-            - hu_test: Momentu Hu dla zestawu testowego.
-            - y_train: Etykiety dla zestawu treningowego.
-            - y_test: Etykiety dla zestawu testowego.
+            - X_train: Training images.
+            - X_test: Test images.
+            - hu_train: Hu moments for the training set.
+            - hu_test: Hu moments for the test set.
+            - y_train: Labels for the training set.
+            - y_test: Labels for the test set.
         """
         if os.path.exists(os.path.join(self.data_dir, 'hu_train.npy')):
-            print("Dane zostały już przetworzone. Ładowanie z plików numpy...")
+            print("Data has already been processed. Loading from numpy files...")
             X_train = np.load(os.path.join(self.data_dir, 'X_train.npy'))
             X_test = np.load(os.path.join(self.data_dir, 'X_test.npy'))
             hu_train = np.load(os.path.join(self.data_dir, 'hu_train.npy'))
@@ -102,21 +99,17 @@ class HuImageData:
             y_train = np.load(os.path.join(self.data_dir, 'y_train.npy'))
             y_test = np.load(os.path.join(self.data_dir, 'y_test.npy'))
         else:
-            # Wczytywanie i przetwarzanie danych
             images, hu_moments, labels = self._extract_hu_moments_image_data()
             print(f'Loaded {len(images)} images with {len(labels)} labels.')
 
-            # Sprawdzanie kształtu danych
             print(images.shape, labels.shape)
             print(hu_moments.shape)
 
-            # Podział na zestaw treningowy i testowy
             X_train, X_test, hu_train, hu_test, y_train, y_test = train_test_split(
                 images, hu_moments, labels, test_size=self.test_size, random_state=random_state
             )
             print(f'Train set size: {X_train.shape[0]}, Test set size: {X_test.shape[0]}')
 
-            # Zapisywanie przetworzonych danych
             np.save(os.path.join(self.data_dir, 'X_train.npy'), X_train)
             np.save(os.path.join(self.data_dir, 'X_test.npy'), X_test)
             np.save(os.path.join(self.data_dir, 'hu_train.npy'), hu_train)
@@ -128,12 +121,12 @@ class HuImageData:
 
     def log_hu_moments(self, hu_moments, labels, output_file):
         """
-        Zapisuje momenty Hu dla każdej klasy do pliku tekstowego.
+        Saves Hu moments for each class to a text file.
 
         Parameters:
-        - hu_moments (ndarray): Tablica z momentami Hu.
-        - labels (ndarray): Etykiety klas.
-        - output_file (str): Ścieżka do pliku wyjściowego.
+        - hu_moments (ndarray): Array of Hu moments.
+        - labels (ndarray): Class labels.
+        - output_file (str): Path to the output file.
         """
         with open(output_file, 'w') as f:
             last_sample_number = 0

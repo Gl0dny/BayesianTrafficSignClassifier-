@@ -4,39 +4,36 @@ import zipfile
 class GTSRB:
     def __init__(self, extract_path, zip_path):
         """
-        Inicjalizuje klasę GTSRB z określonymi ścieżkami do wypakowania i pliku zip.
+        Initializes the GTSRB class with specified paths for extraction and zip file.
 
         Parameters:
-        - extract_path (str): Ścieżka do folderu, w którym dane mają być wypakowane.
-        - zip_path (str): Ścieżka do pliku zip z danymi GTSRB.
+        - extract_path (str): Path to the folder where the data should be extracted.
+        - zip_path (str): Path to the zip file containing the GTSRB data.
         """
         self.extract_path = extract_path
         self.zip_path = zip_path
 
     def extract(self):
         """
-        Funkcja wypakowuje plik z danymi GTSRB (German Traffic Sign Recognition Benchmark) do określonego folderu.
+        Extracts the GTSRB (German Traffic Sign Recognition Benchmark) dataset to the specified folder.
 
-        - Sprawdza, czy dane zostały już wypakowane. Jeśli tak, wypisuje odpowiedni komunikat i kończy działanie.
-        - Jeśli folder docelowy nie istnieje, tworzy go.
-        - Sprawdza, czy plik zip istnieje. Jeśli nie, wypisuje komunikat o błędzie i kończy działanie.
-        - Próbuje wypakować zawartość pliku zip. Jeśli plik zip jest uszkodzony, wypisuje komunikat o błędzie.
+        - Checks if the data has already been extracted. If so, prints a message and exits.
+        - If the target folder does not exist, creates it.
+        - Checks if the zip file exists. If not, prints an error message and exits.
+        - Attempts to extract the contents of the zip file. If the zip file is corrupted, prints an error message.
         """
-        # Sprawdź, czy dane zostały już wypakowane
         if os.path.exists(self.extract_path):
             print("The GTSRB dataset has already been extracted.")
             return
 
-        os.makedirs(self.extract_path, exist_ok=True)  # Tworzy folder, jeśli nie istnieje
+        os.makedirs(self.extract_path, exist_ok=True)
 
-        # Sprawdź, czy plik zip istnieje
         if not os.path.exists(self.zip_path):
             print(f"Error: The file '{self.zip_path}' does not exist.")
             return
 
         print(f"Extracting GTSRB dataset to {self.extract_path} folder...")
         try:
-            # Wypakuj zawartość pliku zip
             with zipfile.ZipFile(self.zip_path, 'r') as zip_ref:
                 zip_ref.extractall(self.extract_path)
             print("Extraction complete.")
