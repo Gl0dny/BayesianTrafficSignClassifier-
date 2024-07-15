@@ -1,5 +1,7 @@
 # Traffic Sign Classification Project Using Bayes Classifier
 
+Project made for Smart Computing Techniques course at Warsaw University of Technology.
+
 The purpose of this program is to process data from the German Traffic Sign Recognition Benchmark (GTSRB) and train two classification models: Gaussian Bayes and Histogram Bayes. The models are evaluated and their performance is logged.
 
 ## Table of Contents
