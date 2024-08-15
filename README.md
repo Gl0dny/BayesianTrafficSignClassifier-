@@ -47,7 +47,7 @@ The purpose of this program is to process data from the German Traffic Sign Reco
 
 ## Project Structure
 
-    BayesianTrafficSignClassifier
+    bayesian-traffic-sign-classifier
     │
     ├── control
     │   ├── __init__.py
